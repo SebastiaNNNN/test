@@ -283,7 +283,7 @@
                             </div>
                             <div class="data-row">
                                 <span class="data-label">Playing Hours</span>
-                                <span class="data-value" id="prof-hours">0</span>
+                                <span class="data-value" id="prof-hours-2">0</span>
                             </div>
                             <div class="data-row">
                                 <span class="data-label">Phone</span>
@@ -291,7 +291,7 @@
                             </div>
                             <div class="data-row">
                                 <span class="data-label">Job</span>
-                                <span class="data-value" id="prof-job" style="color:#f39c12">None</span>
+                                <span class="data-value" id="prof-job-2" style="color:#f39c12">Somer</span>
                             </div>
                             <div class="data-row">
                                 <span class="data-label">Last Online</span>
@@ -309,7 +309,7 @@
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.0.0/firebase-app.js";
         import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, onAuthStateChanged, signOut, sendEmailVerification } from "https://www.gstatic.com/firebasejs/10.0.0/firebase-auth.js";
-        import { getDatabase, ref, set, get, child } from "https://www.gstatic.com/firebasejs/10.0.0/firebase-database.js";
+        import { getDatabase, ref, set, get, child, update } from "https://www.gstatic.com/firebasejs/10.0.0/firebase-database.js";
 
         // CONFIGURAREA TA (Nu o sterge!)
         const firebaseConfig = {
@@ -327,7 +327,16 @@
         const auth = getAuth(app);
         const db = getDatabase(app);
 
-        // --- SISTEM NAVIGARE ---
+        // --- SISTEM FIX PENTRU TINE ---
+        // Scrie in consola browserului: schimbaNume("sbyk") pentru a repara contul curent
+        window.schimbaNume = function(numeNou) {
+            if(auth.currentUser) {
+                update(ref(db, 'site_users/' + auth.currentUser.uid), { robloxUsername: numeNou })
+                .then(() => { alert("Nume schimbat in " + numeNou + "! Da refresh."); location.reload(); });
+            } else { console.log("Nu esti logat!"); }
+        }
+
+        // --- NAVIGARE ---
         window.switchPage = function(pageId) {
             document.querySelectorAll('.page-section').forEach(el => el.classList.remove('active-page'));
             document.querySelectorAll('.sidebar li').forEach(el => el.classList.remove('active'));
@@ -337,7 +346,7 @@
             document.getElementById('page-title').innerText = titluri[pageId];
         }
 
-        // --- AUTH LOGIC ---
+        // --- AUTH LOGIC (Standard) ---
         window.toggleForms = function() {
             const login = document.getElementById('login-form');
             const reg = document.getElementById('register-form');
@@ -426,8 +435,8 @@
                     
                     // Statistici Principale
                     document.getElementById('prof-level').innerText = data.level || 1;
-                    document.getElementById('prof-hours').innerText = data.ore_jucate || 0;
-                    document.getElementById('prof-job').innerText = data.job_curent || "N/A";
+                    document.getElementById('prof-hours-2').innerText = data.ore_jucate || 0;
+                    document.getElementById('prof-job-2').innerText = data.job_curent || "N/A";
                     document.getElementById('prof-phone').innerText = data.telefon || "Fara telefon";
                     
                     // Date Factiune si Rank
