@@ -18,7 +18,20 @@
         ::-webkit-scrollbar-thumb { background: #333; border-radius: 4px; }
         ::-webkit-scrollbar-thumb:hover { background: #00ff88; }
 
-        /* --- OVERLAY VERIFICARE (FULL BLACKOUT) --- */
+        /* --- LOADING SCREEN (FIX PENTRU FLICKER) --- */
+        #loading-screen {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: #121212; z-index: 10000;
+            display: flex; justify-content: center; align-items: center; flex-direction: column;
+        }
+        .loader {
+            border: 4px solid #333; border-top: 4px solid #00ff88;
+            border-radius: 50%; width: 50px; height: 50px;
+            animation: spin 1s linear infinite; margin-bottom: 20px;
+        }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+
+        /* --- OVERLAY VERIFICARE --- */
         #verify-overlay {
             position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
             background-color: #000000; z-index: 99999; display: none;
@@ -35,10 +48,11 @@
         }
 
         /* --- LOGIN STYLES --- */
+        /* Nota: Default display none ca sa nu apara flicker */
         #auth-container {
             position: absolute; top: 0; left: 0; width: 100%; height: 100%;
             background: linear-gradient(135deg, #0f0c29, #302b63, #24243e);
-            display: flex; justify-content: center; align-items: center; z-index: 100;
+            display: none; justify-content: center; align-items: center; z-index: 100;
         }
         .auth-box {
             background: rgba(255, 255, 255, 0.05); padding: 40px; border-radius: 15px;
@@ -59,6 +73,7 @@
         .switch-auth { margin-top: 15px; font-size: 12px; cursor: pointer; color: #aaa; text-decoration: underline; }
 
         /* --- DASHBOARD CONTAINER --- */
+        /* Nota: Default display none ca sa nu apara flicker */
         #dashboard-container { display: none; width: 100%; height: 100%; display: flex; }
 
         /* --- SIDEBAR --- */
@@ -104,7 +119,7 @@
         .page-section.active-page { display: block; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
-        /* --- STATS GRID (Profil) --- */
+        /* --- STATS GRID --- */
         .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; margin-bottom: 30px; }
         .card {
             background-color: #1f1f1f; padding: 20px; border-radius: 12px; position: relative;
@@ -115,7 +130,7 @@
         .card h3 { font-size: 12px; color: #888; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 5px; }
         .card p { font-size: 22px; font-weight: 700; color: #fff; }
 
-        /* --- PROFILE LAYOUT --- */
+        /* --- PROFILE --- */
         .profile-layout { display: flex; flex-direction: column; gap: 30px; }
         .profile-header-card {
             background: #1f1f1f; border-radius: 12px; padding: 30px; border: 1px solid #2a2a2a;
@@ -153,11 +168,21 @@
 
         .tab-content { display: none; } .tab-content.active-tab-content { display: block; }
 
-        /* --- RESPONSIVE --- */
+        /* Warning Email */
+        .email-warning {
+            background: rgba(255, 77, 77, 0.1); border: 1px solid #ff4d4d; color: #ff4d4d;
+            padding: 12px 20px; border-radius: 8px; margin-bottom: 30px; display: none; align-items: center; justify-content: space-between;
+        }
+
         @media (max-width: 900px) { .profile-layout { grid-template-columns: 1fr; } }
     </style>
 </head>
 <body>
+
+    <div id="loading-screen">
+        <div class="loader"></div>
+        <h3 style="color:white; letter-spacing: 2px;">SEVID<span style="color:#00ff88">STUDIOS</span></h3>
+    </div>
 
     <div id="verify-overlay">
         <div class="verify-box">
@@ -197,10 +222,10 @@
         <div class="sidebar">
             <div class="logo"><h2>SEVID<span>STUDIOS</span></h2></div>
             <ul>
-                <li class="active" id="nav-dashboard" onclick="switchPage('dashboard')">
+                <li id="nav-dashboard" onclick="navigateTo('/dashboard')">
                     <a><i class="fas fa-chart-line"></i> Dashboard</a>
                 </li>
-                <li id="nav-profile" onclick="switchPage('profile')">
+                <li id="nav-profile" onclick="navigateTo('/profile')">
                     <a><i class="fas fa-user-circle"></i> Profilul Meu</a>
                 </li>
                 <li><a><i class="fas fa-users"></i> Facțiuni</a></li>
@@ -211,6 +236,11 @@
         </div>
 
         <div class="main-content">
+            <div id="email-alert" class="email-warning">
+                <div><i class="fas fa-exclamation-triangle"></i> Emailul <b><span id="alert-email-addr"></span></b> nu este confirmat!</div>
+                <button onclick="resendVerification()" style="background:none; border:none; color:#fff; text-decoration:underline; cursor:pointer;">Retrimite Email</button>
+            </div>
+
             <header>
                 <div class="welcome-text">
                     <h1 id="page-title">Dashboard</h1>
@@ -226,7 +256,7 @@
                 </div>
             </header>
 
-            <div id="page-dashboard" class="page-section active-page">
+            <div id="page-dashboard" class="page-section">
                 <div class="profile-header-card" style="align-items: flex-start; text-align: left; padding: 20px;">
                     <h3 style="color:#fff; margin-bottom: 15px; border-bottom: 1px solid #333; width:100%; padding-bottom:10px;">Jurnal Activitate</h3>
                     <div style="width:100%; color:#888; font-size:14px;">
@@ -238,7 +268,6 @@
             </div>
 
             <div id="page-profile" class="page-section">
-                
                 <div class="profile-header-card">
                     <img src="" id="prof-big-avatar" class="big-avatar">
                     <div class="profile-name" id="prof-name">Jucator</div>
@@ -257,15 +286,14 @@
 
                 <div class="profile-layout">
                     <div class="profile-main" style="width: 100%;">
-                        
                         <div class="profile-tabs">
-                            <div class="tab-btn active-tab" onclick="switchProfileTab('general')"><i class="fas fa-user"></i> General</div>
-                            <div class="tab-btn" onclick="switchProfileTab('properties')"><i class="fas fa-home"></i> Properties</div>
+                            <div class="tab-btn" onclick="navigateTo('/profile/general')"><i class="fas fa-user"></i> General</div>
+                            <div class="tab-btn" onclick="navigateTo('/profile/properties')"><i class="fas fa-home"></i> Properties</div>
                             <div class="tab-btn"><i class="fas fa-dumbbell"></i> Skills</div>
                             <div class="tab-btn"><i class="fas fa-history"></i> Faction History</div>
                         </div>
 
-                        <div id="tab-general" class="tab-content active-tab-content">
+                        <div id="tab-general" class="tab-content">
                             <div class="panel-card" style="background:#1f1f1f; padding: 25px; border-radius:12px; border:1px solid #2a2a2a;">
                                 <div class="data-row"><span class="data-label">Faction</span><span class="data-value" id="prof-faction" style="color:#3498db">Civilian</span></div>
                                 <div class="data-row"><span class="data-label">Rank</span><span class="data-value" id="prof-rank">0</span></div>
@@ -282,26 +310,14 @@
                                 <div class="data-row"><span class="data-label">Casă Deținută (ID)</span><span class="data-value" id="prop-house">0</span></div>
                                 <div class="data-row"><span class="data-label">Sloturi Garaj</span><span class="data-value" id="prop-slots">2</span></div>
                             </div>
-
                             <div class="panel-card" style="background:#1f1f1f; padding: 25px; border-radius:12px; border:1px solid #2a2a2a;">
                                 <h4 style="color:#fff; margin-bottom:10px;"><i class="fas fa-car"></i> Vehicule Personale</h4>
                                 <table class="vehicles-table">
-                                    <thead>
-                                        <tr>
-                                            <th>Model</th>
-                                            <th>Nume</th>
-                                            <th>Culoare</th>
-                                            <th>KM</th>
-                                            <th>Status</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody id="garage-list">
-                                        <tr><td colspan="5" style="text-align:center; color:#666;">Se încarcă...</td></tr>
-                                    </tbody>
+                                    <thead><tr><th>Model</th><th>Nume</th><th>Culoare</th><th>KM</th><th>Status</th></tr></thead>
+                                    <tbody id="garage-list"><tr><td colspan="5" style="text-align:center; color:#666;">Se încarcă...</td></tr></tbody>
                                 </table>
                             </div>
                         </div>
-
                     </div>
                 </div>
             </div>
@@ -327,85 +343,71 @@
         const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
         const db = getDatabase(app);
-        
         let userStatsListener = null;
 
-        // --- TABS LOGIC ---
-        window.switchProfileTab = function(tabName) {
-            document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active-tab-content'));
-            document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active-tab'));
-            
-            document.getElementById('tab-' + tabName).classList.add('active-tab-content');
-            const btns = document.querySelectorAll('.tab-btn');
-            if(tabName === 'general') btns[0].classList.add('active-tab');
-            if(tabName === 'properties') btns[1].classList.add('active-tab');
+        // --- SISTEM ROUTING (URL) ---
+        window.navigateTo = function(path) {
+            window.history.pushState({}, "", path);
+            handleRoute();
         }
 
-        // --- FUNCTIE DE REGENERARE COD ---
-        window.activeazaVerificarea = async function() {
-            if(!auth.currentUser) return;
-            const snapshot = await get(ref(db, 'site_users/' + auth.currentUser.uid));
-            const siteData = snapshot.val();
-            if(siteData) {
-                const randomCode = Math.floor(1000 + Math.random() * 9000).toString();
-                await update(ref(db, 'site_users/' + auth.currentUser.uid), { verified: false });
-                await set(ref(db, 'verification_codes/' + randomCode), {
-                    uid: auth.currentUser.uid,
-                    robloxName: siteData.robloxUsername
-                });
-                document.getElementById('verification-code').innerText = "/link " + randomCode;
-                alert("Cod nou generat!");
+        window.onpopstate = handleRoute; // Cand da Back in browser
+
+        function handleRoute() {
+            const path = window.location.pathname;
+            const loading = document.getElementById('loading-screen');
+            const authDiv = document.getElementById('auth-container');
+            const dashDiv = document.getElementById('dashboard-container');
+
+            // Ascundem tot initial (pentru a evita flicker in interiorul paginii)
+            document.querySelectorAll('.page-section').forEach(el => el.classList.remove('active-page'));
+            document.querySelectorAll('.sidebar li').forEach(el => el.classList.remove('active'));
+            document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active-tab-content'));
+            document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active-tab'));
+
+            // Logica
+            if(path === '/' || path === '/dashboard') {
+                document.getElementById('page-dashboard').classList.add('active-page');
+                document.getElementById('nav-dashboard').classList.add('active');
+                document.getElementById('page-title').innerText = 'Dashboard';
+            } 
+            else if (path.includes('/profile')) {
+                document.getElementById('page-profile').classList.add('active-page');
+                document.getElementById('nav-profile').classList.add('active');
+                document.getElementById('page-title').innerText = 'Profilul Meu';
+
+                // Sub-rute pentru tab-uri
+                const btns = document.querySelectorAll('.tab-btn');
+                if(path.includes('/properties')) {
+                    document.getElementById('tab-properties').classList.add('active-tab-content');
+                    btns[1].classList.add('active-tab');
+                } else {
+                    document.getElementById('tab-general').classList.add('active-tab-content');
+                    btns[0].classList.add('active-tab');
+                }
+            } else {
+                // 404 sau default -> Dashboard
+                window.history.replaceState({}, "", "/dashboard");
+                handleRoute();
+                return;
             }
         }
 
-        // --- REGISTER ---
-        window.registerUser = async function() {
-            const robloxName = document.getElementById('reg-roblox').value.trim();
-            const email = document.getElementById('reg-email').value;
-            const pass = document.getElementById('reg-pass').value;
-            if(!robloxName || !email || !pass) return alert("Completează tot!");
-
-            const randomCode = Math.floor(1000 + Math.random() * 9000).toString();
-
-            try {
-                const uc = await createUserWithEmailAndPassword(auth, email, pass);
-                await set(ref(db, 'site_users/' + uc.user.uid), { robloxUsername: robloxName, email: email, verified: false });
-                await set(ref(db, 'verification_codes/' + randomCode), { uid: uc.user.uid, robloxName: robloxName });
-                toggleForms();
-            } catch(e) { alert("Eroare: " + e.message); }
-        }
-
-        window.loginUser = () => {
-            const email = document.getElementById('login-email').value;
-            const pass = document.getElementById('login-pass').value;
-            signInWithEmailAndPassword(auth, email, pass).catch(e => alert(e.message));
-        }
-
-        window.logoutUser = () => signOut(auth).then(() => location.reload());
-        
-        window.toggleForms = () => {
-            const login = document.getElementById('login-form');
-            const reg = document.getElementById('register-form');
-            if(login.style.display === 'none') { login.style.display = 'block'; reg.style.display = 'none'; }
-            else { login.style.display = 'none'; reg.style.display = 'block'; }
-        }
-
-        window.switchPage = (pageId) => {
-            document.querySelectorAll('.page-section').forEach(el => el.classList.remove('active-page'));
-            document.querySelectorAll('.sidebar li').forEach(el => el.classList.remove('active'));
-            document.getElementById('page-' + pageId).classList.add('active-page');
-            document.getElementById('nav-' + pageId).classList.add('active');
-            document.getElementById('page-title').innerText = pageId === 'dashboard' ? 'Dashboard' : 'Profilul Meu';
-        }
-
-        // --- MAIN LOGIC ---
+        // --- AUTH & DATA ---
         onAuthStateChanged(auth, (user) => {
-            if (user) {
-                document.getElementById('auth-container').style.display = 'none';
-                document.getElementById('dashboard-container').style.display = 'flex';
+            const loading = document.getElementById('loading-screen');
+            const authDiv = document.getElementById('auth-container');
+            const dashDiv = document.getElementById('dashboard-container');
 
+            if (user) {
+                // Logat
+                authDiv.style.display = 'none';
+                dashDiv.style.display = 'flex';
+                
+                // Verificam status cont
                 const userRef = ref(db, 'site_users/' + user.uid);
                 onValue(userRef, (snapshot) => {
+                    loading.style.display = 'none'; // Ascundem loaderul doar cand avem date
                     const siteData = snapshot.val();
                     if(!siteData) return;
 
@@ -415,18 +417,23 @@
                         gasesteCodulUserului(user.uid);
                     } else {
                         document.getElementById('verify-overlay').style.display = 'none';
-                        document.getElementById('debug-msg').innerText = "Conectat ca: " + siteData.robloxUsername;
                         ascultaDateJoc(siteData.robloxUsername);
                     }
                 });
+                
+                // Initiem ruta curenta
+                handleRoute();
+
             } else {
-                document.getElementById('auth-container').style.display = 'flex';
-                document.getElementById('dashboard-container').style.display = 'none';
-                document.getElementById('verify-overlay').style.display = 'none';
+                // Nelogat
+                loading.style.display = 'none';
+                authDiv.style.display = 'flex';
+                dashDiv.style.display = 'none';
                 if(userStatsListener) userStatsListener();
             }
         });
 
+        // --- RESTUL FUNCTIILOR ---
         async function gasesteCodulUserului(uid) {
             const snap = await get(ref(db, 'verification_codes'));
             let gasit = false;
@@ -436,7 +443,7 @@
                     gasit = true;
                 }
             });
-            if(!gasit) document.getElementById('verification-code').innerText = "COD LIPSĂ. APASĂ 'Generează Cod Nou'";
+            if(!gasit) document.getElementById('verification-code').innerText = "LIPSA COD";
         }
 
         function ascultaDateJoc(numeRoblox) {
@@ -444,15 +451,11 @@
             userStatsListener = onValue(ref(db, `users/${numeRoblox}`), (snapshot) => {
                 const data = snapshot.val();
                 if (data) {
-                    document.getElementById('debug-msg').innerText = "✅ Sincronizat: " + numeRoblox;
-                    
-                    // Stats
+                    // Update Stats
                     document.getElementById('dash-cash').innerText = "$" + (data.banii_cash || 0).toLocaleString();
                     document.getElementById('dash-bank').innerText = "$" + (data.banii_banca || 0).toLocaleString();
                     document.getElementById('dash-job').innerText = data.job_curent || "N/A";
                     document.getElementById('dash-hours').innerText = data.ore_jucate || 0;
-                    
-                    // Profile Info
                     if(data.avatar_url) {
                         document.getElementById('miniAvatar').src = data.avatar_url;
                         document.getElementById('prof-big-avatar').src = data.avatar_url;
@@ -464,15 +467,11 @@
                     document.getElementById('prof-rank').innerText = data.rank || 0;
                     document.getElementById('prof-phone').innerText = data.telefon || "N/A";
                     document.getElementById('prof-seen').innerText = data.last_online || "N/A";
-
-                    // Properties Data
                     document.getElementById('prop-house').innerText = (data.casa_detinuta && data.casa_detinuta > 0) ? "ID " + data.casa_detinuta : "Fără Casă";
                     document.getElementById('prop-slots').innerText = data.sloturi_garaj || 2;
 
-                    // Table
                     const garageList = document.getElementById('garage-list');
                     garageList.innerHTML = ""; 
-                    
                     if (data.masini && Array.isArray(data.masini) && data.masini.length > 0) {
                         data.masini.forEach(car => {
                             const row = document.createElement('tr');
@@ -486,7 +485,45 @@
                 }
             });
         }
-        
+
+        window.toggleForms = () => {
+            const login = document.getElementById('login-form');
+            const reg = document.getElementById('register-form');
+            login.style.display = login.style.display === 'none' ? 'block' : 'none';
+            reg.style.display = reg.style.display === 'none' ? 'block' : 'none';
+        }
+
+        window.registerUser = async () => {
+            const robloxName = document.getElementById('reg-roblox').value.trim();
+            const email = document.getElementById('reg-email').value;
+            const pass = document.getElementById('reg-pass').value;
+            if(!robloxName || !email || !pass) return alert("Completează tot!");
+            const randomCode = Math.floor(1000 + Math.random() * 9000).toString();
+            try {
+                const uc = await createUserWithEmailAndPassword(auth, email, pass);
+                await set(ref(db, 'site_users/' + uc.user.uid), { robloxUsername: robloxName, email: email, verified: false });
+                await set(ref(db, 'verification_codes/' + randomCode), { uid: uc.user.uid, robloxName: robloxName });
+                toggleForms();
+            } catch(e) { alert("Eroare: " + e.message); }
+        }
+
+        window.loginUser = () => {
+            const email = document.getElementById('login-email').value;
+            const pass = document.getElementById('login-pass').value;
+            signInWithEmailAndPassword(auth, email, pass).catch(e => alert(e.message));
+        }
+        window.logoutUser = () => signOut(auth).then(() => { window.history.pushState({}, "", "/"); location.reload() });
+        window.activeazaVerificarea = async function() {
+            if(!auth.currentUser) return;
+            const snapshot = await get(ref(db, 'site_users/' + auth.currentUser.uid));
+            const siteData = snapshot.val();
+            if(siteData) {
+                const randomCode = Math.floor(1000 + Math.random() * 9000).toString();
+                await update(ref(db, 'site_users/' + auth.currentUser.uid), { verified: false });
+                await set(ref(db, 'verification_codes/' + randomCode), { uid: auth.currentUser.uid, robloxName: siteData.robloxUsername });
+                document.getElementById('verification-code').innerText = "/link " + randomCode;
+            }
+        }
         window.cautaJucatorManual = function() {
             const nume = document.getElementById('searchInput').value;
             if(nume) ascultaDateJoc(nume);
