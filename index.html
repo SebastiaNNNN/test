@@ -4,153 +4,58 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>RPG Panel - Advanced</title>
-    
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-
     <style>
-        /* --- CSS GENERAL --- */
-        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', sans-serif; }
         body { display: flex; background-color: #121212; color: #e0e0e0; height: 100vh; overflow: hidden; }
-
-        /* --- SCROLLBAR CUSTOM --- */
-        ::-webkit-scrollbar { width: 8px; }
-        ::-webkit-scrollbar-track { background: #1a1a1a; }
-        ::-webkit-scrollbar-thumb { background: #333; border-radius: 4px; }
-        ::-webkit-scrollbar-thumb:hover { background: #00ff88; }
-
-        /* --- LOGIN STYLES --- */
-        #auth-container {
-            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-            background: linear-gradient(135deg, #0f0c29, #302b63, #24243e);
-            display: flex; justify-content: center; align-items: center; z-index: 100;
-        }
-        .auth-box {
-            background: rgba(255, 255, 255, 0.05); padding: 40px; border-radius: 15px;
-            backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.1);
-            width: 350px; text-align: center; box-shadow: 0 0 30px rgba(0,0,0,0.7);
-        }
-        .auth-box h2 { margin-bottom: 20px; color: #fff; }
-        .auth-box input {
-            width: 100%; padding: 12px; margin: 10px 0; background: rgba(0,0,0,0.3);
-            border: 1px solid #444; color: #fff; border-radius: 5px; outline:none; transition: 0.3s;
-        }
-        .auth-box input:focus { border-color: #00ff88; }
-        .btn-auth {
-            width: 100%; padding: 12px; background: #00ff88; border: none;
-            color: #000; font-weight: bold; cursor: pointer; border-radius: 5px; margin-top: 10px; transition: 0.3s;
-        }
-        .btn-auth:hover { background: #00cc6a; box-shadow: 0 0 15px rgba(0, 255, 136, 0.4); }
+        ::-webkit-scrollbar { width: 8px; } ::-webkit-scrollbar-track { background: #1a1a1a; } ::-webkit-scrollbar-thumb { background: #333; border-radius: 4px; }
+        
+        #auth-container { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: linear-gradient(135deg, #0f0c29, #302b63, #24243e); display: flex; justify-content: center; align-items: center; z-index: 100; }
+        .auth-box { background: rgba(255, 255, 255, 0.05); padding: 40px; border-radius: 15px; backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.1); width: 350px; text-align: center; }
+        .auth-box input { width: 100%; padding: 12px; margin: 10px 0; background: rgba(0,0,0,0.3); border: 1px solid #444; color: #fff; border-radius: 5px; outline:none; }
+        .btn-auth { width: 100%; padding: 12px; background: #00ff88; border: none; color: #000; font-weight: bold; cursor: pointer; border-radius: 5px; margin-top: 10px; }
         .switch-auth { margin-top: 15px; font-size: 12px; cursor: pointer; color: #aaa; text-decoration: underline; }
 
-        /* --- DASHBOARD CONTAINER --- */
         #dashboard-container { display: none; width: 100%; height: 100%; display: flex; }
-
-        /* --- SIDEBAR --- */
-        .sidebar {
-            width: 260px; background-color: #1a1a1a; display: flex; flex-direction: column;
-            padding: 25px; border-right: 1px solid #2a2a2a; box-shadow: 4px 0 15px rgba(0,0,0,0.3); z-index: 10;
-        }
-        .logo { margin-bottom: 40px; text-align: center; padding-bottom: 20px; border-bottom: 1px solid #333; }
-        .logo h2 { color: #fff; font-weight: 800; letter-spacing: 1px; }
-        .logo span { color: #00ff88; }
-        .sidebar ul { list-style: none; }
-        .sidebar ul li { margin-bottom: 10px; }
-        .sidebar ul li a {
-            text-decoration: none; color: #aaa; font-size: 15px; display: flex; align-items: center;
-            padding: 12px 15px; border-radius: 8px; transition: all 0.2s ease; cursor: pointer;
-        }
-        .sidebar ul li a i { margin-right: 15px; width: 20px; text-align: center; }
-        .sidebar ul li a:hover, .sidebar ul li.active a {
-            background-color: rgba(0, 255, 136, 0.1); color: #00ff88; font-weight: 600; border-left: 3px solid #00ff88;
-        }
-        .logout { margin-top: auto; }
-        .logout a { color: #ff4d4d !important; }
-        .logout a:hover { background: rgba(255, 77, 77, 0.1) !important; }
-
-        /* --- MAIN CONTENT AREA --- */
-        .main-content {
-            flex: 1; padding: 40px; overflow-y: auto;
-            background: #141414; /* Flat dark bg for cleaner look */
-        }
-
-        /* --- HEADER COMUN --- */
-        header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 40px; }
-        .search-box {
-            background: #1f1f1f; padding: 8px 15px; border-radius: 8px;
-            display: flex; align-items: center; border: 1px solid #333; width: 300px;
-        }
-        .search-box input { background: transparent; border: none; color: #fff; margin-left: 10px; outline: none; width: 100%; }
-        .user-mini-profile { display: flex; align-items: center; gap: 12px; }
-        .user-mini-profile img { width: 45px; height: 45px; border-radius: 50%; border: 2px solid #333; }
-
-        /* --- PAGES (Switchable) --- */
-        .page-section { display: none; animation: fadeIn 0.3s ease; }
-        .page-section.active-page { display: block; }
-
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-
-        /* --- PAGE 1: DASHBOARD STATS --- */
+        .sidebar { width: 260px; background: #1a1a1a; padding: 25px; border-right: 1px solid #2a2a2a; display: flex; flex-direction: column; }
+        .sidebar ul li { list-style: none; margin-bottom: 10px; }
+        .sidebar a { text-decoration: none; color: #aaa; display: flex; align-items: center; padding: 12px; border-radius: 8px; cursor: pointer; transition: 0.2s; }
+        .sidebar a:hover, .active a { background: rgba(0, 255, 136, 0.1); color: #00ff88; }
+        
+        .main-content { flex: 1; padding: 40px; overflow-y: auto; background: #141414; }
+        
+        /* Dashboard Stats */
         .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 25px; margin-bottom: 30px; }
-        .card {
-            background-color: #1f1f1f; padding: 25px; border-radius: 12px; position: relative;
-            border: 1px solid #2a2a2a; transition: transform 0.2s;
-        }
-        .card:hover { transform: translateY(-3px); border-color: #00ff88; }
-        .card i { font-size: 30px; margin-bottom: 15px; color: #00ff88; background: rgba(0,255,136,0.1); padding: 10px; border-radius: 10px; }
-        .card h3 { font-size: 13px; color: #888; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 5px; }
-        .card p { font-size: 26px; font-weight: 700; color: #fff; }
-
-        /* --- PAGE 2: PROFILE DESIGN (NOU) --- */
-        .profile-layout { display: grid; grid-template-columns: 300px 1fr; gap: 30px; }
+        .card { background: #1f1f1f; padding: 25px; border-radius: 12px; border: 1px solid #2a2a2a; }
+        .card h3 { font-size: 13px; color: #888; margin-bottom: 5px; } 
+        .card p { font-size: 26px; font-weight: bold; color: #fff; }
         
-        /* Coloana Stanga - Backpack/Info */
-        .profile-sidebar .panel-card {
-            background: #1f1f1f; border-radius: 12px; padding: 20px; border: 1px solid #2a2a2a; margin-bottom: 20px;
-        }
-        .backpack-item {
-            display: flex; align-items: center; gap: 15px; padding: 10px; background: #181818; 
-            border-radius: 8px; margin-top: 10px; border: 1px solid #333;
-        }
-        .backpack-icon { color: #00ff88; font-size: 24px; }
-        
-        /* Coloana Dreapta - Main Details */
-        .profile-header-card {
-            background: #1f1f1f; border-radius: 12px; padding: 30px; border: 1px solid #2a2a2a;
-            display: flex; flex-direction: column; align-items: center; text-align: center; margin-bottom: 25px;
-        }
+        /* Profile Layout Restore */
+        .profile-header-card { background: #1f1f1f; border-radius: 12px; padding: 30px; margin-bottom: 25px; display: flex; flex-direction: column; align-items: center; border: 1px solid #2a2a2a; }
         .big-avatar { width: 100px; height: 100px; border-radius: 50%; border: 3px solid #00ff88; margin-bottom: 15px; }
-        .profile-name { font-size: 24px; font-weight: bold; color: #fff; }
-        .profile-status { font-size: 14px; color: #00ff88; display: flex; align-items: center; gap: 5px; margin-bottom: 15px; }
-        .status-dot { width: 8px; height: 8px; background: #00ff88; border-radius: 50%; display: inline-block; }
-        
-        .badges-container { display: flex; gap: 10px; justify-content: center; }
+        .badges-container { display: flex; gap: 10px; margin-top: 10px; }
         .badge { padding: 5px 15px; border-radius: 20px; font-size: 12px; font-weight: bold; color: #fff; }
         .badge-vip { background: linear-gradient(45deg, #f1c40f, #f39c12); color: #000; }
-        .badge-admin { background: linear-gradient(45deg, #e74c3c, #c0392b); }
         .badge-premium { background: linear-gradient(45deg, #9b59b6, #8e44ad); }
 
-        /* Tabs Navigation */
+        .profile-layout { display: grid; grid-template-columns: 300px 1fr; gap: 30px; }
+        
+        /* Backpack Styles */
+        .backpack-item { display: flex; align-items: center; gap: 15px; padding: 10px; background: #181818; border-radius: 8px; margin-top: 10px; border: 1px solid #333; }
+        .backpack-icon { color: #00ff88; font-size: 24px; }
+
+        /* Tabs */
         .profile-tabs { display: flex; gap: 20px; margin-bottom: 20px; border-bottom: 1px solid #333; padding-bottom: 10px; }
-        .tab-btn { color: #888; cursor: pointer; padding: 10px; font-weight: 500; transition: 0.3s; display: flex; align-items: center; gap: 8px; }
-        .tab-btn:hover { color: #fff; }
+        .tab-btn { color: #888; cursor: pointer; padding: 10px; font-weight: 500; }
         .tab-btn.active-tab { color: #00ff88; border-bottom: 2px solid #00ff88; }
 
-        /* Data Rows */
-        .data-row {
-            display: flex; justify-content: space-between; padding: 15px 0; border-bottom: 1px solid #2a2a2a;
-            font-size: 14px;
-        }
-        .data-row:last-child { border-bottom: none; }
-        .data-label { color: #888; font-weight: 500; }
-        .data-value { color: #fff; font-weight: 600; }
+        .data-row { display: flex; justify-content: space-between; padding: 15px 0; border-bottom: 1px solid #2a2a2a; font-size: 14px; }
+        .data-label { color: #888; } .data-value { color: #fff; font-weight: 600; }
+        
+        .page-section { display: none; }
+        .active-page { display: block; }
+        .email-warning { background: rgba(255, 77, 77, 0.1); border: 1px solid #ff4d4d; color: #ff4d4d; padding: 12px 20px; border-radius: 8px; margin-bottom: 30px; display: none; align-items: center; justify-content: space-between; }
 
-        /* Warning Email */
-        .email-warning {
-            background: rgba(255, 77, 77, 0.1); border: 1px solid #ff4d4d; color: #ff4d4d;
-            padding: 12px 20px; border-radius: 8px; margin-bottom: 30px; display: none; align-items: center; justify-content: space-between;
-        }
-
-        /* Responsive */
         @media (max-width: 900px) { .profile-layout { grid-template-columns: 1fr; } }
     </style>
 </head>
@@ -175,85 +80,65 @@
     </div>
 
     <div id="dashboard-container">
-        
         <div class="sidebar">
-            <div class="logo"><h2>SEVID<span>STUDIOS</span></h2></div>
+            <h2 style="color:#fff; text-align:center; margin-bottom:40px;">SEVID<span style="color:#00ff88">STUDIOS</span></h2>
             <ul>
-                <li class="active" id="nav-dashboard" onclick="switchPage('dashboard')">
-                    <a><i class="fas fa-chart-line"></i> Dashboard</a>
-                </li>
-                <li id="nav-profile" onclick="switchPage('profile')">
-                    <a><i class="fas fa-user-circle"></i> Profilul Meu</a>
-                </li>
-                <li><a><i class="fas fa-users"></i> Facțiuni</a></li>
-                <li><a><i class="fas fa-file-contract"></i> Reclamații</a></li>
-                <li><a><i class="fas fa-store"></i> Shop Premium</a></li>
+                <li class="active" id="nav-dashboard" onclick="switchPage('dashboard')"><a><i class="fas fa-chart-line" style="margin-right:10px"></i> Dashboard</a></li>
+                <li id="nav-profile" onclick="switchPage('profile')"><a><i class="fas fa-user-circle" style="margin-right:10px"></i> Profilul Meu</a></li>
+                <li><a><i class="fas fa-users" style="margin-right:10px"></i> Facțiuni</a></li>
+                <li><a><i class="fas fa-file-contract" style="margin-right:10px"></i> Reclamații</a></li>
+                <li><a><i class="fas fa-store" style="margin-right:10px"></i> Shop Premium</a></li>
             </ul>
-            <div class="logout"><a onclick="logoutUser()"><i class="fas fa-sign-out-alt"></i> Ieșire</a></div>
+            <div class="logout" style="margin-top:auto;"><a onclick="logoutUser()"><i class="fas fa-sign-out-alt" style="margin-right:10px"></i> Ieșire</a></div>
         </div>
 
         <div class="main-content">
-            
             <div id="email-alert" class="email-warning">
-                <div><i class="fas fa-exclamation-triangle"></i> Emailul <b><span id="alert-email-addr"></span></b> nu este confirmat!</div>
-                <button onclick="resendVerification()" style="background:none; border:none; color:#fff; text-decoration:underline; cursor:pointer;">Retrimite Email</button>
+                <div><i class="fas fa-exclamation-triangle"></i> Email neconfirmat!</div>
+                <button onclick="resendVerification()" style="background:none; border:none; color:#fff; text-decoration:underline; cursor:pointer;">Retrimite</button>
             </div>
 
-            <header>
-                <div class="welcome-text">
-                    <h1 id="page-title">Dashboard</h1>
-                    <p style="color:#666; font-size:14px;">Bine ai venit pe panel!</p>
-                </div>
-                
-                <div class="user-mini-profile">
-                    <div class="search-box">
-                        <i class="fas fa-search" style="color:#666"></i>
-                        <input type="text" id="searchInput" placeholder="Caută jucător...">
-                        <i class="fas fa-arrow-right" style="color:#00ff88; cursor:pointer;" onclick="cautaJucatorManual()"></i>
-                    </div>
-                    <img src="https://tr.rbxcdn.com/535451733604f3780376d54833215904/150/150/AvatarHeadshot/Png" id="miniAvatar">
-                </div>
-            </header>
+            <h1 id="page-title" style="color:#fff; margin-bottom:30px;">Dashboard</h1>
 
             <div id="page-dashboard" class="page-section active-page">
                 <div class="stats-grid">
-                    <div class="card"><i class="fas fa-wallet"></i><h3>Bani Cash</h3><p id="dash-cash">$0</p></div>
-                    <div class="card"><i class="fas fa-university"></i><h3>Bani Bancă</h3><p id="dash-bank">$0</p></div>
-                    <div class="card"><i class="fas fa-briefcase"></i><h3>Job</h3><p id="dash-job">N/A</p></div>
-                    <div class="card"><i class="fas fa-clock"></i><h3>Ore Jucate</h3><p id="dash-hours">0</p></div>
+                    <div class="card"><i class="fas fa-wallet" style="color:#00ff88;"></i><h3>BANI CASH</h3><p id="dash-cash">$0</p></div>
+                    <div class="card"><i class="fas fa-university" style="color:#00ff88;"></i><h3>BANI BANCĂ</h3><p id="dash-bank">$0</p></div>
+                    <div class="card"><i class="fas fa-briefcase" style="color:#00ff88;"></i><h3>JOB</h3><p id="dash-job">N/A</p></div>
+                    <div class="card"><i class="fas fa-clock" style="color:#00ff88;"></i><h3>ORE</h3><p id="dash-hours">0</p></div>
                 </div>
-
-                <div class="profile-header-card" style="align-items: flex-start; text-align: left; padding: 20px;">
-                    <h3 style="color:#fff; margin-bottom: 15px; border-bottom: 1px solid #333; width:100%; padding-bottom:10px;">Jurnal Activitate</h3>
-                    <div style="width:100%; color:#888; font-size:14px;">
-                        <p><i class="fas fa-check-circle" style="color:#00ff88; margin-right:10px;"></i> Te-ai conectat la panel cu succes.</p>
-                        <p style="margin-top:10px;"><i class="fas fa-server" style="color:#3498db; margin-right:10px;"></i> Verificare sincronizare...</p>
-                        <p id="debug-msg" style="color: #666; font-size: 12px; margin-top: 10px;">(Status conectare va apărea aici)</p>
-                    </div>
+                <div style="color: #666; font-size: 12px; margin-top:20px;">
+                    Debug: <span id="debug-msg">Așteptare conectare...</span> <br>
+                    (Dacă vezi "Jucator" și nu numele tău, scrie în consolă: <b>schimbaNume("sbyk")</b> și dă refresh)
                 </div>
             </div>
 
             <div id="page-profile" class="page-section">
-                
                 <div class="profile-header-card">
                     <img src="" id="prof-big-avatar" class="big-avatar">
-                    <div class="profile-name" id="prof-name">Jucator</div>
-                    <div class="profile-status"><span class="status-dot"></span> Online pe Panel</div>
+                    <h2 id="prof-name" style="color:#fff; margin-top:10px;">Jucator</h2>
+                    <span style="color:#00ff88; font-size:14px; margin-top:5px;">● Online pe Panel</span>
                     <div class="badges-container">
                         <span class="badge badge-vip"><i class="fas fa-crown"></i> VIP</span>
+                        <span class="badge badge-premium"><i class="fas fa-gem"></i> Premium</span>
                     </div>
                 </div>
 
                 <div class="profile-layout">
                     <div class="profile-sidebar">
-                        <div class="panel-card">
-                            <h4 style="color:#fff; margin-bottom:15px; border-bottom:1px solid #333; padding-bottom:10px;">Vehicule</h4>
+                        <div style="background:#1f1f1f; padding:20px; border-radius:12px; border:1px solid #2a2a2a;">
+                            <h4 style="color:#fff; border-bottom:1px solid #333; padding-bottom:10px; margin-bottom:10px;">Backpack</h4>
                             <div class="backpack-item">
+                                <i class="fas fa-box backpack-icon"></i>
+                                <div><div style="color:#fff; font-weight:600;">High Quality Kit</div><div style="color:#666; font-size:12px;">Reparații</div></div>
+                            </div>
+                            <div class="backpack-item">
+                                <i class="fas fa-mobile-alt backpack-icon" style="color:#3498db"></i>
+                                <div><div style="color:#fff; font-weight:600;">iPhone 14</div><div style="color:#666; font-size:12px;">Telefon</div></div>
+                            </div>
+                            <div class="backpack-item" style="margin-top:20px; border-color:#00ff88;">
                                 <i class="fas fa-car backpack-icon"></i>
-                                <div>
-                                    <div style="color:#fff; font-weight:600;">Mașini Personale</div>
-                                    <div style="color:#666; font-size:12px;" id="prof-cars">0 Vehicule</div>
-                                </div>
+                                <div><div style="color:#fff; font-weight:600;">Garaj</div><div style="color:#666; font-size:12px;" id="prof-cars">0 Vehicule</div></div>
                             </div>
                         </div>
                     </div>
@@ -262,47 +147,23 @@
                         <div class="profile-tabs">
                             <div class="tab-btn active-tab"><i class="fas fa-user"></i> Profile</div>
                             <div class="tab-btn"><i class="fas fa-home"></i> Properties</div>
+                            <div class="tab-btn"><i class="fas fa-dumbbell"></i> Skills</div>
+                            <div class="tab-btn"><i class="fas fa-history"></i> Faction History</div>
                         </div>
 
-                        <div class="panel-card" style="background:#1f1f1f; padding: 25px; border-radius:12px; border:1px solid #2a2a2a;">
-                            <div class="data-row">
-                                <span class="data-label">Faction</span>
-                                <span class="data-value" id="prof-faction" style="color:#3498db">Civilian</span>
-                            </div>
-                            <div class="data-row">
-                                <span class="data-label">Rank</span>
-                                <span class="data-value" id="prof-rank">0</span>
-                            </div>
-                            <div class="data-row">
-                                <span class="data-label">Level</span>
-                                <span class="data-value" id="prof-level">1</span>
-                            </div>
-                            <div class="data-row">
-                                <span class="data-label">Respect Points</span>
-                                <span class="data-value" id="prof-rp">0</span>
-                            </div>
-                            <div class="data-row">
-                                <span class="data-label">Playing Hours</span>
-                                <span class="data-value" id="prof-hours-2">0</span>
-                            </div>
-                            <div class="data-row">
-                                <span class="data-label">Phone</span>
-                                <span class="data-value" id="prof-phone">000-0000</span>
-                            </div>
-                            <div class="data-row">
-                                <span class="data-label">Job</span>
-                                <span class="data-value" id="prof-job-2" style="color:#f39c12">Somer</span>
-                            </div>
-                            <div class="data-row">
-                                <span class="data-label">Last Online</span>
-                                <span class="data-value" id="prof-seen">Necunoscut</span>
-                            </div>
+                        <div style="background:#1f1f1f; padding:25px; border-radius:12px; border:1px solid #2a2a2a;">
+                            <div class="data-row"><span class="data-label">Faction</span><span class="data-value" id="prof-faction" style="color:#3498db">Civil</span></div>
+                            <div class="data-row"><span class="data-label">Rank</span><span class="data-value" id="prof-rank">0</span></div>
+                            <div class="data-row"><span class="data-label">Level</span><span class="data-value" id="prof-level">1</span></div>
+                            <div class="data-row"><span class="data-label">Respect Points</span><span class="data-value" id="prof-rp">0</span></div>
+                            <div class="data-row"><span class="data-label">Playing Hours</span><span class="data-value" id="prof-hours-2">0</span></div>
+                            <div class="data-row"><span class="data-label">Phone</span><span class="data-value" id="prof-phone">...</span></div>
+                            <div class="data-row"><span class="data-label">Job</span><span class="data-value" id="prof-job-2" style="color:#f39c12">Somer</span></div>
+                            <div class="data-row"><span class="data-label">Last Online</span><span class="data-value" id="prof-seen">...</span></div>
                         </div>
                     </div>
                 </div>
-
             </div>
-
         </div>
     </div>
 
@@ -311,7 +172,7 @@
         import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, onAuthStateChanged, signOut, sendEmailVerification } from "https://www.gstatic.com/firebasejs/10.0.0/firebase-auth.js";
         import { getDatabase, ref, set, get, child, update } from "https://www.gstatic.com/firebasejs/10.0.0/firebase-database.js";
 
-        // CONFIGURAREA TA (Nu o sterge!)
+        // CONFIGURAREA TA
         const firebaseConfig = {
             apiKey: "AIzaSyDwD_aL4yioTc16MOCxz7cVec_eSKfABlo",
             authDomain: "projsmprobl.firebaseapp.com",
@@ -327,13 +188,13 @@
         const auth = getAuth(app);
         const db = getDatabase(app);
 
-        // --- SISTEM FIX PENTRU TINE ---
-        // Scrie in consola browserului: schimbaNume("sbyk") pentru a repara contul curent
+        // --- REPARARE CONT (Acum va merge dupa ce pui regulile in Firebase) ---
         window.schimbaNume = function(numeNou) {
             if(auth.currentUser) {
                 update(ref(db, 'site_users/' + auth.currentUser.uid), { robloxUsername: numeNou })
-                .then(() => { alert("Nume schimbat in " + numeNou + "! Da refresh."); location.reload(); });
-            } else { console.log("Nu esti logat!"); }
+                .then(() => { alert("Succes! Nume schimbat în " + numeNou + ". Dă refresh la pagină."); location.reload(); })
+                .catch((e) => { alert("Tot nu merge? Ai pus regulile in Firebase Console?"); console.error(e); });
+            } else { console.log("Trebuie sa fii logat!"); }
         }
 
         // --- NAVIGARE ---
@@ -346,7 +207,7 @@
             document.getElementById('page-title').innerText = titluri[pageId];
         }
 
-        // --- AUTH LOGIC (Standard) ---
+        // --- AUTH ---
         window.toggleForms = function() {
             const login = document.getElementById('login-form');
             const reg = document.getElementById('register-form');
@@ -361,7 +222,6 @@
             if(!robloxName || !email || !pass) { alert("Completează tot!"); return; }
 
             createUserWithEmailAndPassword(auth, email, pass).then((uc) => {
-                // Salvam numele in site_users
                 set(ref(db, 'site_users/' + uc.user.uid), { robloxUsername: robloxName, email: email });
                 sendEmailVerification(uc.user).then(() => { alert("Cont creat! Verifică mail-ul."); toggleForms(); });
             }).catch((e) => alert("Eroare: " + e.message));
@@ -376,7 +236,7 @@
         window.logoutUser = function() { signOut(auth).then(() => location.reload()); }
         window.resendVerification = function() { if(auth.currentUser) sendEmailVerification(auth.currentUser).then(()=>alert("Trimis!")); }
 
-        // --- MAIN LOGIC ---
+        // --- DATA LOAD ---
         onAuthStateChanged(auth, async (user) => {
             const authDiv = document.getElementById('auth-container');
             const dashDiv = document.getElementById('dashboard-container');
@@ -387,22 +247,17 @@
 
                 if (!user.emailVerified) {
                     document.getElementById('email-alert').style.display = 'flex';
-                    document.getElementById('alert-email-addr').innerText = user.email;
                 } else {
                     document.getElementById('email-alert').style.display = 'none';
                 }
 
-                // Cautam ce nume de Roblox are userul conectat
                 const snapshot = await get(child(ref(db), `site_users/${user.uid}`));
                 if (snapshot.exists()) {
                     const myRobloxName = snapshot.val().robloxUsername;
-                    console.log("Utilizator conectat pe site ca:", myRobloxName);
-                    document.getElementById('debug-msg').innerText = "Conectat ca: " + myRobloxName + ". Se caută date...";
-                    
-                    // Incarcam datele
+                    document.getElementById('debug-msg').innerText = "Conectat ca: " + myRobloxName;
                     incarcaStats(myRobloxName);
                 } else {
-                    alert("Eroare critica: Contul tau de site nu are un nume de Roblox asociat. Te rog fa-ti alt cont.");
+                    document.getElementById('debug-msg').innerText = "Cont fără nume Roblox. Folosește consola: schimbaNume('sbyk')";
                 }
             } else {
                 authDiv.style.display = 'flex';
@@ -412,68 +267,41 @@
 
         async function incarcaStats(numeRoblox) {
             try {
-                // Cautam in folderul 'users' creat de scriptul Roblox
                 const snapshot = await get(child(ref(db), `users/${numeRoblox}`));
-                
                 if (snapshot.exists()) {
                     const data = snapshot.val();
-                    console.log("Date gasite in Firebase:", data);
                     
-                    document.getElementById('debug-msg').innerText = "✅ Date sincronizate cu succes pentru " + numeRoblox;
-
-                    // --- ACTUALIZARE DASHBOARD ---
+                    // Dashboard
                     document.getElementById('dash-cash').innerText = "$" + (data.banii_cash || 0).toLocaleString();
                     document.getElementById('dash-bank').innerText = "$" + (data.banii_banca || 0).toLocaleString();
                     document.getElementById('dash-job').innerText = data.job_curent || "N/A";
                     document.getElementById('dash-hours').innerText = data.ore_jucate || 0;
-                    if(data.avatar_url) document.getElementById('miniAvatar').src = data.avatar_url;
 
-                    // --- ACTUALIZARE PROFIL DETALIAT ---
-                    // Nume si Poza
+                    // Profil
                     document.getElementById('prof-name').innerText = numeRoblox;
                     if(data.avatar_url) document.getElementById('prof-big-avatar').src = data.avatar_url;
+                    if(data.avatar_url) document.getElementById('miniAvatar').src = data.avatar_url;
                     
-                    // Statistici Principale
-                    document.getElementById('prof-level').innerText = data.level || 1;
-                    document.getElementById('prof-hours-2').innerText = data.ore_jucate || 0;
-                    document.getElementById('prof-job-2').innerText = data.job_curent || "N/A";
-                    document.getElementById('prof-phone').innerText = data.telefon || "Fara telefon";
-                    
-                    // Date Factiune si Rank
                     document.getElementById('prof-faction').innerText = data.factiune || "Civil";
                     document.getElementById('prof-rank').innerText = data.rank || 0;
-                    
-                    // RP si Masini
+                    document.getElementById('prof-level').innerText = data.level || 1;
                     document.getElementById('prof-rp').innerText = data.rp || 0;
+                    document.getElementById('prof-hours-2').innerText = data.ore_jucate || 0;
+                    document.getElementById('prof-phone').innerText = data.telefon || "...";
+                    document.getElementById('prof-job-2').innerText = data.job_curent || "N/A";
                     document.getElementById('prof-cars').innerText = (data.masini_detinute || 0) + " Vehicule";
-                    
-                    // Last Online
-                    if(data.last_online) {
-                        document.getElementById('prof-seen').innerText = data.last_online;
-                    }
+                    if(data.last_online) document.getElementById('prof-seen').innerText = data.last_online;
 
                 } else {
-                    console.log("Nu exista date pentru:", numeRoblox);
-                    document.getElementById('debug-msg').innerText = "❌ Nu s-au găsit date din joc pentru: " + numeRoblox + ". Asigură-te că ai intrat pe server!";
-                    document.getElementById('prof-name').innerText = numeRoblox;
+                    document.getElementById('debug-msg').innerText = "Nu s-au găsit date în joc pentru: " + numeRoblox;
                 }
-            } catch (e) { 
-                console.error(e); 
-                alert("Eroare la citirea datelor: " + e.message);
-            }
-        }
-
-        window.cautaJucatorManual = function() {
-            const nume = document.getElementById('searchInput').value;
-            if(nume) incarcaStats(nume);
+            } catch (e) { console.error(e); }
         }
 
         setInterval(async () => {
             if (auth.currentUser && !auth.currentUser.emailVerified) {
                 await auth.currentUser.reload();
-                if (auth.currentUser.emailVerified) {
-                    document.getElementById('email-alert').style.display = 'none';
-                }
+                if (auth.currentUser.emailVerified) document.getElementById('email-alert').style.display = 'none';
             }
         }, 5000);
     </script>
