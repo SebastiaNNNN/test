@@ -42,6 +42,18 @@
         .btn-auth:hover { background: #00cc6a; box-shadow: 0 0 15px rgba(0, 255, 136, 0.4); }
         .switch-auth { margin-top: 15px; font-size: 12px; cursor: pointer; color: #aaa; text-decoration: underline; }
 
+        /* --- VERIFICATION OVERLAY (NOU) --- */
+        #verify-overlay {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.95); z-index: 200; display: none;
+            flex-direction: column; justify-content: center; align-items: center; text-align: center;
+        }
+        .code-display {
+            font-size: 40px; letter-spacing: 5px; color: #00ff88; font-weight: bold;
+            margin: 20px 0; border: 2px dashed #00ff88; padding: 10px 40px; border-radius: 10px;
+            background: rgba(0, 255, 136, 0.1);
+        }
+
         /* --- DASHBOARD CONTAINER --- */
         #dashboard-container { display: none; width: 100%; height: 100%; display: flex; }
 
@@ -154,6 +166,17 @@
     </style>
 </head>
 <body>
+
+    <div id="verify-overlay">
+        <h1 style="color:white; font-size: 32px; margin-bottom: 15px;">⚠️ Cont Neverificat</h1>
+        <p style="color:#ccc; max-width: 500px; font-size: 16px;">Pentru siguranță, trebuie să confirmi că contul Roblox <b><span id="verify-name" style="color: #00ff88;"></span></b> este al tău.</p>
+        <p style="color:#ccc; margin-top: 20px;">Intră pe server și scrie în chat:</p>
+        
+        <div class="code-display" id="verification-code">----</div>
+        
+        <p style="color:#888; font-size: 14px; margin-top: 10px;">(Site-ul se va debloca automat când scrii codul)</p>
+        <button onclick="logoutUser()" style="margin-top: 30px; background: transparent; border: 1px solid #444; color: #aaa; padding: 10px 25px; cursor: pointer; border-radius: 5px;">Ieșire</button>
+    </div>
 
     <div id="auth-container">
         <div class="auth-box" id="login-form">
@@ -273,14 +296,6 @@
                     </div>
 
                     <div class="profile-main">
-                        <div class="panel-card" style="background:#1f1f1f; padding: 20px; border-radius:12px; border:1px solid #2a2a2a; margin-bottom: 20px;">
-                            <h4 style="color:#fff; margin-bottom:15px;"><i class="fas fa-cog"></i> Setări Conectare</h4>
-                            <div style="display: flex; gap: 10px; align-items: center;">
-                                <input type="text" id="input-schimba-nume" placeholder="Nume Roblox Exact" style="background: #111; border: 1px solid #444; color: #fff; padding: 10px; border-radius: 6px; flex: 1;">
-                                <button onclick="salveazaNumeNou()" style="background: #00ff88; color: #000; border: none; padding: 10px 20px; border-radius: 6px; cursor: pointer; font-weight: bold;">Salvează</button>
-                            </div>
-                            <p style="color: #666; font-size: 12px; margin-top: 10px;">* Asigură-te că scrii numele exact cum este în joc (Litere Mari/mici).</p>
-                        </div>
                         <div class="profile-tabs">
                             <div class="tab-btn active-tab"><i class="fas fa-user"></i> Profile</div>
                             <div class="tab-btn"><i class="fas fa-home"></i> Properties</div>
@@ -333,9 +348,8 @@
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.0.0/firebase-app.js";
         import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, onAuthStateChanged, signOut, sendEmailVerification } from "https://www.gstatic.com/firebasejs/10.0.0/firebase-auth.js";
-        import { getDatabase, ref, set, get, child, update } from "https://www.gstatic.com/firebasejs/10.0.0/firebase-database.js";
+        import { getDatabase, ref, set, get, child, update, onValue } from "https://www.gstatic.com/firebasejs/10.0.0/firebase-database.js";
 
-        // CONFIGURAREA TA (REPARAT API KEY cu F mare)
         const firebaseConfig = {
             apiKey: "AIzaSyDwD_aL4yioTc16MOCxz7cVec_eSKfABlo",
             authDomain: "projsmprobl.firebaseapp.com",
@@ -350,27 +364,8 @@
         const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
         const db = getDatabase(app);
-
-        // --- FUNCTIA NOUA PENTRU UI ---
-        window.salveazaNumeNou = function() {
-            const numeNou = document.getElementById('input-schimba-nume').value;
-            if(!numeNou) return alert("Scrie un nume!");
-            
-            if(auth.currentUser) {
-                update(ref(db, 'site_users/' + auth.currentUser.uid), { robloxUsername: numeNou })
-                .then(() => { alert("Nume schimbat in " + numeNou + "! Da refresh."); location.reload(); })
-                .catch((e) => { alert("Eroare: " + e.message); });
-            } else { alert("Nu esti logat!"); }
-        }
-
-        // --- REPARARE CONT VECHI ---
-        window.schimbaNume = function(numeNou) {
-            if(auth.currentUser) {
-                update(ref(db, 'site_users/' + auth.currentUser.uid), { robloxUsername: numeNou })
-                .then(() => { alert("Nume schimbat in " + numeNou + "! Da refresh."); location.reload(); })
-                .catch((e) => { alert("EROARE PERMISIUNI: Verifica regulile Firebase! " + e.message); });
-            } else { console.log("Nu esti logat!"); }
-        }
+        
+        let userStatsListener = null;
 
         // --- NAVIGARE ---
         window.switchPage = function(pageId) {
@@ -382,7 +377,7 @@
             document.getElementById('page-title').innerText = titluri[pageId];
         }
 
-        // --- AUTH LOGIC (Standard) ---
+        // --- AUTH ---
         window.toggleForms = function() {
             const login = document.getElementById('login-form');
             const reg = document.getElementById('register-form');
@@ -390,16 +385,35 @@
             else { login.style.display = 'none'; reg.style.display = 'block'; }
         }
 
-        window.registerUser = function() {
-            const robloxName = document.getElementById('reg-roblox').value;
+        // --- REGISTER CU GENERARE COD ---
+        window.registerUser = async function() {
+            const robloxName = document.getElementById('reg-roblox').value.trim();
             const email = document.getElementById('reg-email').value;
             const pass = document.getElementById('reg-pass').value;
-            if(!robloxName || !email || !pass) { alert("Completează tot!"); return; }
+            if(!robloxName || !email || !pass) return alert("Completează tot!");
 
-            createUserWithEmailAndPassword(auth, email, pass).then((uc) => {
-                set(ref(db, 'site_users/' + uc.user.uid), { robloxUsername: robloxName, email: email });
-                sendEmailVerification(uc.user).then(() => { alert("Cont creat! Verifică mail-ul."); toggleForms(); });
-            }).catch((e) => alert("Eroare: " + e.message));
+            // Generam codul random
+            const randomCode = Math.floor(1000 + Math.random() * 9000).toString();
+
+            try {
+                const uc = await createUserWithEmailAndPassword(auth, email, pass);
+                
+                // Salvam userul ca "verified: false"
+                await set(ref(db, 'site_users/' + uc.user.uid), { 
+                    robloxUsername: robloxName, 
+                    email: email,
+                    verified: false 
+                });
+
+                // Salvam codul pt verificare in joc
+                await set(ref(db, 'verification_codes/' + randomCode), {
+                    uid: uc.user.uid,
+                    robloxName: robloxName
+                });
+
+                alert("Cont creat! Acum trebuie să confirmi în joc.");
+                toggleForms();
+            } catch(e) { alert("Eroare: " + e.message); }
         }
 
         window.loginUser = function() {
@@ -415,105 +429,106 @@
         onAuthStateChanged(auth, async (user) => {
             const authDiv = document.getElementById('auth-container');
             const dashDiv = document.getElementById('dashboard-container');
+            const verifyOverlay = document.getElementById('verify-overlay');
 
             if (user) {
                 authDiv.style.display = 'none';
-                dashDiv.style.display = 'flex';
+                dashDiv.style.display = 'flex'; // Aratam dashboard-ul, dar poate fi acoperit de overlay
 
                 if (!user.emailVerified) {
                     document.getElementById('email-alert').style.display = 'flex';
                     document.getElementById('alert-email-addr').innerText = user.email;
-                } else {
-                    document.getElementById('email-alert').style.display = 'none';
                 }
 
-                // Cautam ce nume de Roblox are userul conectat
-                const snapshot = await get(child(ref(db), `site_users/${user.uid}`));
-                if (snapshot.exists()) {
-                    const myRobloxName = snapshot.val().robloxUsername;
-                    console.log("Utilizator conectat pe site ca:", myRobloxName);
-                    document.getElementById('debug-msg').innerText = "Conectat ca: " + myRobloxName + ". Se caută date...";
-                    
-                    // -- AFISAM NUMELE IN INPUT PENTRU MODIFICARE --
-                    document.getElementById('input-schimba-nume').value = myRobloxName;
+                // ASCULTAM USERUL LOGAT (pt verificare in timp real)
+                const userRef = ref(db, 'site_users/' + user.uid);
+                onValue(userRef, (snapshot) => {
+                    const siteData = snapshot.val();
+                    if(!siteData) return;
 
-                    // Incarcam datele
-                    incarcaStats(myRobloxName);
-                } else {
-                    document.getElementById('debug-msg').innerText = "Cont fara nume Roblox! Seteaza numele la Profil!";
-                }
+                    // Daca NU e verificat, aratam ecranul negru cu codul
+                    if (siteData.verified === false) {
+                        gasesteCodulUserului(user.uid, siteData.robloxUsername);
+                    } else {
+                        // Daca e verificat, ascundem ecranul negru si aratam datele
+                        verifyOverlay.style.display = 'none';
+                        document.getElementById('debug-msg').innerText = "Conectat ca: " + siteData.robloxUsername;
+                        
+                        // Pornim ascultarea datelor din joc (REALTIME)
+                        ascultaDateJoc(siteData.robloxUsername);
+                    }
+                });
+
             } else {
                 authDiv.style.display = 'flex';
                 dashDiv.style.display = 'none';
+                verifyOverlay.style.display = 'none';
+                if(userStatsListener) userStatsListener(); // Oprim ascultarea veche
             }
         });
 
-        async function incarcaStats(numeRoblox) {
-            try {
-                // Cautam in folderul 'users' creat de scriptul Roblox
-                const snapshot = await get(child(ref(db), `users/${numeRoblox}`));
-                
-                if (snapshot.exists()) {
-                    const data = snapshot.val();
-                    console.log("Date gasite in Firebase:", data);
-                    
-                    document.getElementById('debug-msg').innerText = "✅ Date sincronizate cu succes pentru " + numeRoblox;
+        // Cauta codul pt overlay
+        async function gasesteCodulUserului(uid, name) {
+            document.getElementById('verify-overlay').style.display = 'flex';
+            document.getElementById('verify-name').innerText = name;
+            
+            const snap = await get(ref(db, 'verification_codes'));
+            snap.forEach(child => {
+                if(child.val().uid === uid) {
+                    document.getElementById('verification-code').innerText = "/link " + child.key;
+                }
+            });
+        }
 
-                    // --- ACTUALIZARE DASHBOARD ---
+        // Functia de update REALTIME de la joc
+        function ascultaDateJoc(numeRoblox) {
+            if(userStatsListener) userStatsListener(); // Reset listener
+
+            // Ascultam direct in 'users/Nume'
+            userStatsListener = onValue(ref(db, `users/${numeRoblox}`), (snapshot) => {
+                const data = snapshot.val();
+                
+                if (data) {
+                    document.getElementById('debug-msg').innerText = "✅ Sincronizat in timp real cu: " + numeRoblox;
+
+                    // Dashboard update
                     document.getElementById('dash-cash').innerText = "$" + (data.banii_cash || 0).toLocaleString();
                     document.getElementById('dash-bank').innerText = "$" + (data.banii_banca || 0).toLocaleString();
                     document.getElementById('dash-job').innerText = data.job_curent || "N/A";
                     document.getElementById('dash-hours').innerText = data.ore_jucate || 0;
                     if(data.avatar_url) document.getElementById('miniAvatar').src = data.avatar_url;
 
-                    // --- ACTUALIZARE PROFIL DETALIAT ---
-                    // Nume si Poza
+                    // Profile update
                     document.getElementById('prof-name').innerText = numeRoblox;
                     if(data.avatar_url) document.getElementById('prof-big-avatar').src = data.avatar_url;
                     
-                    // Statistici Principale
                     document.getElementById('prof-level').innerText = data.level || 1;
                     document.getElementById('prof-hours-2').innerText = data.ore_jucate || 0;
                     document.getElementById('prof-job-2').innerText = data.job_curent || "N/A";
                     document.getElementById('prof-phone').innerText = data.telefon || "Fara telefon";
-                    
-                    // Date Factiune si Rank
                     document.getElementById('prof-faction').innerText = data.factiune || "Civil";
                     document.getElementById('prof-rank').innerText = data.rank || 0;
-                    
-                    // RP si Masini
                     document.getElementById('prof-rp').innerText = data.rp || 0;
                     document.getElementById('prof-cars').innerText = (data.masini_detinute || 0) + " Vehicule";
-                    
-                    // Last Online
-                    if(data.last_online) {
-                        document.getElementById('prof-seen').innerText = data.last_online;
-                    }
-
+                    if(data.last_online) document.getElementById('prof-seen').innerText = data.last_online;
                 } else {
-                    console.log("Nu exista date pentru:", numeRoblox);
-                    document.getElementById('debug-msg').innerText = "❌ Nu s-au găsit date din joc pentru: " + numeRoblox + ". Asigură-te că ai intrat pe server!";
-                    document.getElementById('prof-name').innerText = numeRoblox;
+                    document.getElementById('debug-msg').innerText = "⚠️ Aștept date de la server...";
                 }
-            } catch (e) { 
-                console.error(e); 
-                alert("Eroare la citirea datelor: " + e.message);
-            }
+            });
         }
 
         window.cautaJucatorManual = function() {
             const nume = document.getElementById('searchInput').value;
-            if(nume) incarcaStats(nume);
-        }
-
-        setInterval(async () => {
-            if (auth.currentUser && !auth.currentUser.emailVerified) {
-                await auth.currentUser.reload();
-                if (auth.currentUser.emailVerified) {
-                    document.getElementById('email-alert').style.display = 'none';
-                }
+            // Functia de cautare manuala ramane pe 'once' ca sa nu strice listenerul principal
+            if(nume) {
+                get(ref(db, `users/${nume}`)).then(s => {
+                    if(s.exists()) {
+                        // Doar un exemplu simplu, in realitate ar trebui sa populeze altfel daca vrei sa vezi profilul altcuiva
+                        alert("User gasit: " + nume + " (Cash: " + s.val().banii_cash + ")");
+                    } else alert("Nu exista userul.");
+                });
             }
-        }, 5000);
+        }
     </script>
 </body>
 </html>
