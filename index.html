@@ -166,7 +166,7 @@
         </div>
         <div class="auth-box" id="register-form" style="display: none;">
             <h2>📝 Înregistrare</h2>
-            <input type="text" id="reg-roblox" placeholder="Nume Exact Roblox">
+            <input type="text" id="reg-roblox" placeholder="Nume Exact Roblox (ex: sbyk)">
             <input type="email" id="reg-email" placeholder="Email">
             <input type="password" id="reg-pass" placeholder="Parolă">
             <button class="btn-auth" onclick="registerUser()">Creează Cont</button>
@@ -227,7 +227,8 @@
                     <h3 style="color:#fff; margin-bottom: 15px; border-bottom: 1px solid #333; width:100%; padding-bottom:10px;">Jurnal Activitate</h3>
                     <div style="width:100%; color:#888; font-size:14px;">
                         <p><i class="fas fa-check-circle" style="color:#00ff88; margin-right:10px;"></i> Te-ai conectat la panel cu succes.</p>
-                        <p style="margin-top:10px;"><i class="fas fa-server" style="color:#3498db; margin-right:10px;"></i> Date sincronizate din Roblox.</p>
+                        <p style="margin-top:10px;"><i class="fas fa-server" style="color:#3498db; margin-right:10px;"></i> Verificare sincronizare...</p>
+                        <p id="debug-msg" style="color: #666; font-size: 12px; margin-top: 10px;">(Status conectare va apărea aici)</p>
                     </div>
                 </div>
             </div>
@@ -240,26 +241,18 @@
                     <div class="profile-status"><span class="status-dot"></span> Online pe Panel</div>
                     <div class="badges-container">
                         <span class="badge badge-vip"><i class="fas fa-crown"></i> VIP</span>
-                        <span class="badge badge-premium"><i class="fas fa-gem"></i> Premium</span>
-                        </div>
+                    </div>
                 </div>
 
                 <div class="profile-layout">
                     <div class="profile-sidebar">
                         <div class="panel-card">
-                            <h4 style="color:#fff; margin-bottom:15px; border-bottom:1px solid #333; padding-bottom:10px;">Backpack</h4>
+                            <h4 style="color:#fff; margin-bottom:15px; border-bottom:1px solid #333; padding-bottom:10px;">Vehicule</h4>
                             <div class="backpack-item">
-                                <i class="fas fa-box backpack-icon"></i>
+                                <i class="fas fa-car backpack-icon"></i>
                                 <div>
-                                    <div style="color:#fff; font-weight:600;">High Quality Kit</div>
-                                    <div style="color:#666; font-size:12px;">Reparații Avansate</div>
-                                </div>
-                            </div>
-                            <div class="backpack-item">
-                                <i class="fas fa-mobile-alt backpack-icon" style="color:#3498db"></i>
-                                <div>
-                                    <div style="color:#fff; font-weight:600;">iPhone 14</div>
-                                    <div style="color:#666; font-size:12px;">Telefon Mobil</div>
+                                    <div style="color:#fff; font-weight:600;">Mașini Personale</div>
+                                    <div style="color:#666; font-size:12px;" id="prof-cars">0 Vehicule</div>
                                 </div>
                             </div>
                         </div>
@@ -269,22 +262,24 @@
                         <div class="profile-tabs">
                             <div class="tab-btn active-tab"><i class="fas fa-user"></i> Profile</div>
                             <div class="tab-btn"><i class="fas fa-home"></i> Properties</div>
-                            <div class="tab-btn"><i class="fas fa-dumbbell"></i> Skills</div>
-                            <div class="tab-btn"><i class="fas fa-history"></i> Faction History</div>
                         </div>
 
                         <div class="panel-card" style="background:#1f1f1f; padding: 25px; border-radius:12px; border:1px solid #2a2a2a;">
                             <div class="data-row">
                                 <span class="data-label">Faction</span>
-                                <span class="data-value" style="color:#3498db">Civilian</span>
+                                <span class="data-value" id="prof-faction" style="color:#3498db">Civilian</span>
                             </div>
                             <div class="data-row">
-                                <span class="data-label">Faction Warn</span>
-                                <span class="data-value">0/3</span>
+                                <span class="data-label">Rank</span>
+                                <span class="data-value" id="prof-rank">0</span>
                             </div>
                             <div class="data-row">
                                 <span class="data-label">Level</span>
                                 <span class="data-value" id="prof-level">1</span>
+                            </div>
+                            <div class="data-row">
+                                <span class="data-label">Respect Points</span>
+                                <span class="data-value" id="prof-rp">0</span>
                             </div>
                             <div class="data-row">
                                 <span class="data-label">Playing Hours</span>
@@ -292,19 +287,15 @@
                             </div>
                             <div class="data-row">
                                 <span class="data-label">Phone</span>
-                                <span class="data-value">559-291</span>
-                            </div>
-                            <div class="data-row">
-                                <span class="data-label">Register Date</span>
-                                <span class="data-value">2025-01-20</span>
+                                <span class="data-value" id="prof-phone">000-0000</span>
                             </div>
                             <div class="data-row">
                                 <span class="data-label">Job</span>
                                 <span class="data-value" id="prof-job" style="color:#f39c12">None</span>
                             </div>
                             <div class="data-row">
-                                <span class="data-label">Referral ID</span>
-                                <span class="data-value">#81596</span>
+                                <span class="data-label">Last Online</span>
+                                <span class="data-value" id="prof-seen">Necunoscut</span>
                             </div>
                         </div>
                     </div>
@@ -338,20 +329,15 @@
 
         // --- SISTEM NAVIGARE ---
         window.switchPage = function(pageId) {
-            // Ascunde toate paginile
             document.querySelectorAll('.page-section').forEach(el => el.classList.remove('active-page'));
             document.querySelectorAll('.sidebar li').forEach(el => el.classList.remove('active'));
-
-            // Arata pagina selectata
             document.getElementById('page-' + pageId).classList.add('active-page');
             document.getElementById('nav-' + pageId).classList.add('active');
-
-            // Actualizeaza titlul sus
             const titluri = {'dashboard': 'Dashboard', 'profile': 'Profilul Meu'};
             document.getElementById('page-title').innerText = titluri[pageId];
         }
 
-        // --- AUTH LOGIC (Standard) ---
+        // --- AUTH LOGIC ---
         window.toggleForms = function() {
             const login = document.getElementById('login-form');
             const reg = document.getElementById('register-form');
@@ -366,6 +352,7 @@
             if(!robloxName || !email || !pass) { alert("Completează tot!"); return; }
 
             createUserWithEmailAndPassword(auth, email, pass).then((uc) => {
+                // Salvam numele in site_users
                 set(ref(db, 'site_users/' + uc.user.uid), { robloxUsername: robloxName, email: email });
                 sendEmailVerification(uc.user).then(() => { alert("Cont creat! Verifică mail-ul."); toggleForms(); });
             }).catch((e) => alert("Eroare: " + e.message));
@@ -396,11 +383,17 @@
                     document.getElementById('email-alert').style.display = 'none';
                 }
 
+                // Cautam ce nume de Roblox are userul conectat
                 const snapshot = await get(child(ref(db), `site_users/${user.uid}`));
                 if (snapshot.exists()) {
                     const myRobloxName = snapshot.val().robloxUsername;
-                    // Incarcam datele in ambele pagini (Dashboard si Profil)
+                    console.log("Utilizator conectat pe site ca:", myRobloxName);
+                    document.getElementById('debug-msg').innerText = "Conectat ca: " + myRobloxName + ". Se caută date...";
+                    
+                    // Incarcam datele
                     incarcaStats(myRobloxName);
+                } else {
+                    alert("Eroare critica: Contul tau de site nu are un nume de Roblox asociat. Te rog fa-ti alt cont.");
                 }
             } else {
                 authDiv.style.display = 'flex';
@@ -410,28 +403,55 @@
 
         async function incarcaStats(numeRoblox) {
             try {
+                // Cautam in folderul 'users' creat de scriptul Roblox
                 const snapshot = await get(child(ref(db), `users/${numeRoblox}`));
+                
                 if (snapshot.exists()) {
                     const data = snapshot.val();
+                    console.log("Date gasite in Firebase:", data);
                     
-                    // Actualizare Dashboard Simplu
+                    document.getElementById('debug-msg').innerText = "✅ Date sincronizate cu succes pentru " + numeRoblox;
+
+                    // --- ACTUALIZARE DASHBOARD ---
                     document.getElementById('dash-cash').innerText = "$" + (data.banii_cash || 0).toLocaleString();
                     document.getElementById('dash-bank').innerText = "$" + (data.banii_banca || 0).toLocaleString();
                     document.getElementById('dash-job').innerText = data.job_curent || "N/A";
                     document.getElementById('dash-hours').innerText = data.ore_jucate || 0;
                     if(data.avatar_url) document.getElementById('miniAvatar').src = data.avatar_url;
 
-                    // Actualizare Profil Detaliat (Nou)
+                    // --- ACTUALIZARE PROFIL DETALIAT ---
+                    // Nume si Poza
                     document.getElementById('prof-name').innerText = numeRoblox;
-                    document.getElementById('prof-level').innerText = "15"; // Placeholder sau data.level
+                    if(data.avatar_url) document.getElementById('prof-big-avatar').src = data.avatar_url;
+                    
+                    // Statistici Principale
+                    document.getElementById('prof-level').innerText = data.level || 1;
                     document.getElementById('prof-hours').innerText = data.ore_jucate || 0;
                     document.getElementById('prof-job').innerText = data.job_curent || "N/A";
-                    if(data.avatar_url) document.getElementById('prof-big-avatar').src = data.avatar_url;
+                    document.getElementById('prof-phone').innerText = data.telefon || "Fara telefon";
+                    
+                    // Date Factiune si Rank
+                    document.getElementById('prof-faction').innerText = data.factiune || "Civil";
+                    document.getElementById('prof-rank').innerText = data.rank || 0;
+                    
+                    // RP si Masini
+                    document.getElementById('prof-rp').innerText = data.rp || 0;
+                    document.getElementById('prof-cars').innerText = (data.masini_detinute || 0) + " Vehicule";
+                    
+                    // Last Online
+                    if(data.last_online) {
+                        document.getElementById('prof-seen').innerText = data.last_online;
+                    }
 
                 } else {
-                    document.getElementById('prof-name').innerText = numeRoblox; // Macar numele sa apara
+                    console.log("Nu exista date pentru:", numeRoblox);
+                    document.getElementById('debug-msg').innerText = "❌ Nu s-au găsit date din joc pentru: " + numeRoblox + ". Asigură-te că ai intrat pe server!";
+                    document.getElementById('prof-name').innerText = numeRoblox;
                 }
-            } catch (e) { console.error(e); }
+            } catch (e) { 
+                console.error(e); 
+                alert("Eroare la citirea datelor: " + e.message);
+            }
         }
 
         window.cautaJucatorManual = function() {
