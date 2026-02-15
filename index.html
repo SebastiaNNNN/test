@@ -82,12 +82,22 @@
         .video-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: radial-gradient(circle, rgba(0,0,0,0.4) 0%, rgba(0,0,0,0.8) 100%); z-index: 0; }
 
         /* Center Login Panel */
-        #auth-container {
-            background: transparent !important;
-            display: none; /* Se activeaza din JS */
-            justify-content: center;
-            align-items: center;
-        }
+        /* Center Login Panel */
+#auth-container {
+    position: fixed; /* <--- ASTA E CHEIA. Îl fixează pe ecran */
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    
+    background: transparent !important;
+    /* display: none;  <-- Aceasta linie ramane comentata sau o stergi, 
+                           pentru ca JS-ul se ocupa de display (flex/none) */
+    display: none; 
+    justify-content: center;
+    align-items: center;
+    z-index: 50; /* Asigură-te că e peste fundal, dar sub SweetAlert (care are z-index mare) */
+}
 
         .auth-box {
             position: relative;
@@ -654,3 +664,4 @@
     </script>
 </body>
 </html>
+
