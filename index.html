@@ -8,15 +8,42 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
     <style>
-        /* --- CSS GENERAL (DESIGN-UL TĂU ORIGINAL) --- */
+        /* --- CSS GENERAL --- */
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
         body { display: flex; background-color: #121212; color: #e0e0e0; height: 100vh; overflow: hidden; }
 
-        /* --- SCROLLBAR CUSTOM --- */
+        /* --- SCROLLBAR --- */
         ::-webkit-scrollbar { width: 8px; }
         ::-webkit-scrollbar-track { background: #1a1a1a; }
         ::-webkit-scrollbar-thumb { background: #333; border-radius: 4px; }
         ::-webkit-scrollbar-thumb:hover { background: #00ff88; }
+
+        /* --- OVERLAY VERIFICARE (FULL BLACKOUT - MODIFICAT AICI) --- */
+        #verify-overlay {
+            position: fixed; /* FIXED acopera tot ecranul garantat */
+            top: 0; left: 0; width: 100vw; height: 100vh;
+            background-color: #000000; /* NEGRU COMPLET */
+            z-index: 99999; /* Peste orice altceva */
+            display: none; /* Ascuns default */
+            flex-direction: column; justify-content: center; align-items: center; text-align: center;
+        }
+        
+        .verify-box {
+            border: 1px solid #333;
+            padding: 40px;
+            border-radius: 20px;
+            background: #0a0a0a;
+            box-shadow: 0 0 50px rgba(0, 255, 136, 0.1);
+            max-width: 500px;
+            width: 90%;
+        }
+
+        .code-display {
+            font-size: 32px; letter-spacing: 2px; color: #00ff88; font-weight: bold; font-family: monospace;
+            margin: 25px 0; border: 2px dashed #00ff88; padding: 15px; border-radius: 10px;
+            background: rgba(0, 255, 136, 0.05);
+            user-select: all; /* Selecteaza tot cand dai click */
+        }
 
         /* --- LOGIN STYLES --- */
         #auth-container {
@@ -41,18 +68,6 @@
         }
         .btn-auth:hover { background: #00cc6a; box-shadow: 0 0 15px rgba(0, 255, 136, 0.4); }
         .switch-auth { margin-top: 15px; font-size: 12px; cursor: pointer; color: #aaa; text-decoration: underline; }
-
-        /* --- VERIFICATION OVERLAY (NOU) --- */
-        #verify-overlay {
-            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.95); z-index: 200; display: none;
-            flex-direction: column; justify-content: center; align-items: center; text-align: center;
-        }
-        .code-display {
-            font-size: 40px; letter-spacing: 5px; color: #00ff88; font-weight: bold;
-            margin: 20px 0; border: 2px dashed #00ff88; padding: 10px 40px; border-radius: 10px;
-            background: rgba(0, 255, 136, 0.1);
-        }
 
         /* --- DASHBOARD CONTAINER --- */
         #dashboard-container { display: none; width: 100%; height: 100%; display: flex; }
@@ -168,14 +183,25 @@
 <body>
 
     <div id="verify-overlay">
-        <h1 style="color:white; font-size: 32px; margin-bottom: 15px;">⚠️ Cont Neverificat</h1>
-        <p style="color:#ccc; max-width: 500px; font-size: 16px;">Pentru siguranță, trebuie să confirmi că contul Roblox <b><span id="verify-name" style="color: #00ff88;"></span></b> este al tău.</p>
-        <p style="color:#ccc; margin-top: 20px;">Intră pe server și scrie în chat:</p>
-        
-        <div class="code-display" id="verification-code">----</div>
-        
-        <p style="color:#888; font-size: 14px; margin-top: 10px;">(Site-ul se va debloca automat când scrii codul)</p>
-        <button onclick="logoutUser()" style="margin-top: 30px; background: transparent; border: 1px solid #444; color: #aaa; padding: 10px 25px; cursor: pointer; border-radius: 5px;">Ieșire</button>
+        <div class="verify-box">
+            <h1 style="color:white; font-size: 28px; margin-bottom: 10px;">⚠️ Cont Neverificat</h1>
+            <p style="color:#ccc; font-size: 16px; margin-bottom: 20px;">
+                Trebuie să confirmi că ești proprietarul contului <b><span id="verify-name" style="color: #00ff88;"></span></b>.
+            </p>
+            
+            <p style="color:#888; margin-bottom: 5px;">Intră pe server și scrie în chat:</p>
+            
+            <div class="code-display" id="verification-code">Generare cod...</div>
+            
+            <p style="color:#666; font-size: 12px; margin-top: 20px;">
+                (Dacă scrii corect, acest ecran dispare singur în câteva secunde)
+            </p>
+
+            <div style="margin-top: 30px; display: flex; gap: 10px; justify-content: center;">
+                <button onclick="activeazaVerificarea()" style="background: #333; color: white; border: none; padding: 10px 15px; cursor: pointer; border-radius: 5px;">🔄 Generează Cod Nou</button>
+                <button onclick="logoutUser()" style="background: transparent; border: 1px solid #444; color: #aaa; padding: 10px 15px; cursor: pointer; border-radius: 5px;">Ieșire</button>
+            </div>
+        </div>
     </div>
 
     <div id="auth-container">
@@ -197,7 +223,6 @@
     </div>
 
     <div id="dashboard-container">
-        
         <div class="sidebar">
             <div class="logo"><h2>SEVID<span>STUDIOS</span></h2></div>
             <ul>
@@ -215,18 +240,11 @@
         </div>
 
         <div class="main-content">
-            
-            <div id="email-alert" class="email-warning">
-                <div><i class="fas fa-exclamation-triangle"></i> Emailul <b><span id="alert-email-addr"></span></b> nu este confirmat!</div>
-                <button onclick="resendVerification()" style="background:none; border:none; color:#fff; text-decoration:underline; cursor:pointer;">Retrimite Email</button>
-            </div>
-
             <header>
                 <div class="welcome-text">
                     <h1 id="page-title">Dashboard</h1>
                     <p style="color:#666; font-size:14px;">Bine ai venit pe panel!</p>
                 </div>
-                
                 <div class="user-mini-profile">
                     <div class="search-box">
                         <i class="fas fa-search" style="color:#666"></i>
@@ -244,7 +262,6 @@
                     <div class="card"><i class="fas fa-briefcase"></i><h3>Job</h3><p id="dash-job">N/A</p></div>
                     <div class="card"><i class="fas fa-clock"></i><h3>Ore Jucate</h3><p id="dash-hours">0</p></div>
                 </div>
-
                 <div class="profile-header-card" style="align-items: flex-start; text-align: left; padding: 20px;">
                     <h3 style="color:#fff; margin-bottom: 15px; border-bottom: 1px solid #333; width:100%; padding-bottom:10px;">Jurnal Activitate</h3>
                     <div style="width:100%; color:#888; font-size:14px;">
@@ -256,7 +273,6 @@
             </div>
 
             <div id="page-profile" class="page-section">
-                
                 <div class="profile-header-card">
                     <img src="" id="prof-big-avatar" class="big-avatar">
                     <div class="profile-name" id="prof-name">Jucator</div>
@@ -284,7 +300,6 @@
                                     <div style="color:#666; font-size:12px;">Telefon Mobil</div>
                                 </div>
                             </div>
-                            
                             <div class="backpack-item" style="border: 1px solid #00ff88;">
                                 <i class="fas fa-car backpack-icon"></i>
                                 <div>
@@ -348,8 +363,9 @@
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.0.0/firebase-app.js";
         import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, onAuthStateChanged, signOut, sendEmailVerification } from "https://www.gstatic.com/firebasejs/10.0.0/firebase-auth.js";
-        import { getDatabase, ref, set, get, child, update, onValue } from "https://www.gstatic.com/firebasejs/10.0.0/firebase-database.js";
+        import { getDatabase, ref, set, get, update, onValue } from "https://www.gstatic.com/firebasejs/10.0.0/firebase-database.js";
 
+        // CONFIGURAREA TA (REPARAT API KEY cu F mare)
         const firebaseConfig = {
             apiKey: "AIzaSyDwD_aL4yioTc16MOCxz7cVec_eSKfABlo",
             authDomain: "projsmprobl.firebaseapp.com",
@@ -367,167 +383,155 @@
         
         let userStatsListener = null;
 
-        // --- NAVIGARE ---
-        window.switchPage = function(pageId) {
-            document.querySelectorAll('.page-section').forEach(el => el.classList.remove('active-page'));
-            document.querySelectorAll('.sidebar li').forEach(el => el.classList.remove('active'));
-            document.getElementById('page-' + pageId).classList.add('active-page');
-            document.getElementById('nav-' + pageId).classList.add('active');
-            const titluri = {'dashboard': 'Dashboard', 'profile': 'Profilul Meu'};
-            document.getElementById('page-title').innerText = titluri[pageId];
+        // --- FUNCTIE DE REGENERARE COD (Daca e ----) ---
+        window.activeazaVerificarea = async function() {
+            if(!auth.currentUser) return;
+            
+            const snapshot = await get(ref(db, 'site_users/' + auth.currentUser.uid));
+            const siteData = snapshot.val();
+            
+            if(siteData) {
+                const randomCode = Math.floor(1000 + Math.random() * 9000).toString();
+                
+                await update(ref(db, 'site_users/' + auth.currentUser.uid), { verified: false });
+                
+                await set(ref(db, 'verification_codes/' + randomCode), {
+                    uid: auth.currentUser.uid,
+                    robloxName: siteData.robloxUsername
+                });
+                
+                // Fortam afisarea imediata
+                document.getElementById('verification-code').innerText = "/link " + randomCode;
+                alert("Cod nou generat!");
+            }
         }
 
-        // --- AUTH ---
-        window.toggleForms = function() {
-            const login = document.getElementById('login-form');
-            const reg = document.getElementById('register-form');
-            if(login.style.display === 'none') { login.style.display = 'block'; reg.style.display = 'none'; }
-            else { login.style.display = 'none'; reg.style.display = 'block'; }
-        }
-
-        // --- REGISTER CU GENERARE COD ---
+        // --- REGISTER ---
         window.registerUser = async function() {
             const robloxName = document.getElementById('reg-roblox').value.trim();
             const email = document.getElementById('reg-email').value;
             const pass = document.getElementById('reg-pass').value;
             if(!robloxName || !email || !pass) return alert("Completează tot!");
 
-            // Generam codul random
             const randomCode = Math.floor(1000 + Math.random() * 9000).toString();
 
             try {
                 const uc = await createUserWithEmailAndPassword(auth, email, pass);
                 
-                // Salvam userul ca "verified: false"
                 await set(ref(db, 'site_users/' + uc.user.uid), { 
                     robloxUsername: robloxName, 
                     email: email,
                     verified: false 
                 });
 
-                // Salvam codul pt verificare in joc
                 await set(ref(db, 'verification_codes/' + randomCode), {
                     uid: uc.user.uid,
                     robloxName: robloxName
                 });
 
-                alert("Cont creat! Acum trebuie să confirmi în joc.");
                 toggleForms();
             } catch(e) { alert("Eroare: " + e.message); }
         }
 
-        window.loginUser = function() {
+        window.loginUser = () => {
             const email = document.getElementById('login-email').value;
             const pass = document.getElementById('login-pass').value;
-            signInWithEmailAndPassword(auth, email, pass).catch((e) => alert("Eroare: " + e.message));
+            signInWithEmailAndPassword(auth, email, pass).catch(e => alert(e.message));
         }
 
-        window.logoutUser = function() { signOut(auth).then(() => location.reload()); }
-        window.resendVerification = function() { if(auth.currentUser) sendEmailVerification(auth.currentUser).then(()=>alert("Trimis!")); }
+        window.logoutUser = () => signOut(auth).then(() => location.reload());
+        
+        window.toggleForms = () => {
+            const login = document.getElementById('login-form');
+            const reg = document.getElementById('register-form');
+            login.style.display = login.style.display === 'none' ? 'block' : 'none';
+            reg.style.display = reg.style.display === 'none' ? 'block' : 'none';
+        }
+
+        window.switchPage = (pageId) => {
+            document.querySelectorAll('.page-section').forEach(el => el.classList.remove('active-page'));
+            document.querySelectorAll('.sidebar li').forEach(el => el.classList.remove('active'));
+            document.getElementById('page-' + pageId).classList.add('active-page');
+            document.getElementById('nav-' + pageId).classList.add('active');
+        }
 
         // --- MAIN LOGIC ---
-        onAuthStateChanged(auth, async (user) => {
-            const authDiv = document.getElementById('auth-container');
-            const dashDiv = document.getElementById('dashboard-container');
-            const verifyOverlay = document.getElementById('verify-overlay');
-
+        onAuthStateChanged(auth, (user) => {
             if (user) {
-                authDiv.style.display = 'none';
-                dashDiv.style.display = 'flex'; // Aratam dashboard-ul, dar poate fi acoperit de overlay
+                document.getElementById('auth-container').style.display = 'none';
+                document.getElementById('dashboard-container').style.display = 'flex';
 
-                if (!user.emailVerified) {
-                    document.getElementById('email-alert').style.display = 'flex';
-                    document.getElementById('alert-email-addr').innerText = user.email;
-                }
-
-                // ASCULTAM USERUL LOGAT (pt verificare in timp real)
                 const userRef = ref(db, 'site_users/' + user.uid);
                 onValue(userRef, (snapshot) => {
                     const siteData = snapshot.val();
                     if(!siteData) return;
 
-                    // Daca NU e verificat, aratam ecranul negru cu codul
-                    if (siteData.verified === false) {
-                        gasesteCodulUserului(user.uid, siteData.robloxUsername);
-                    } else {
-                        // Daca e verificat, ascundem ecranul negru si aratam datele
-                        verifyOverlay.style.display = 'none';
-                        document.getElementById('debug-msg').innerText = "Conectat ca: " + siteData.robloxUsername;
+                    // Daca e NEVERIFICAT
+                    if (siteData.verified === false || siteData.verified === undefined) {
+                        document.getElementById('verify-overlay').style.display = 'flex'; // ARATA NEGRU
+                        document.getElementById('verify-name').innerText = siteData.robloxUsername;
                         
-                        // Pornim ascultarea datelor din joc (REALTIME)
+                        // Cautam codul
+                        gasesteCodulUserului(user.uid);
+                    } else {
+                        // VERIFICAT
+                        document.getElementById('verify-overlay').style.display = 'none';
+                        document.getElementById('debug-msg').innerText = "Conectat ca: " + siteData.robloxUsername;
                         ascultaDateJoc(siteData.robloxUsername);
                     }
                 });
-
             } else {
-                authDiv.style.display = 'flex';
-                dashDiv.style.display = 'none';
-                verifyOverlay.style.display = 'none';
-                if(userStatsListener) userStatsListener(); // Oprim ascultarea veche
+                document.getElementById('auth-container').style.display = 'flex';
+                document.getElementById('dashboard-container').style.display = 'none';
+                document.getElementById('verify-overlay').style.display = 'none';
+                if(userStatsListener) userStatsListener();
             }
         });
 
-        // Cauta codul pt overlay
-        async function gasesteCodulUserului(uid, name) {
-            document.getElementById('verify-overlay').style.display = 'flex';
-            document.getElementById('verify-name').innerText = name;
-            
+        // Cauta codul. Daca nu il gaseste (din cauza erorilor vechi), afiseaza buton de generare.
+        async function gasesteCodulUserului(uid) {
             const snap = await get(ref(db, 'verification_codes'));
+            let gasit = false;
+            
             snap.forEach(child => {
                 if(child.val().uid === uid) {
                     document.getElementById('verification-code').innerText = "/link " + child.key;
+                    gasit = true;
                 }
             });
+
+            if(!gasit) {
+                 // Daca e blocat pe ecranul negru dar nu are cod generat,
+                 // textul ramane '----' sau putem pune un mesaj.
+                 // Utilizatorul va apasa butonul "Genereaza Cod Nou" din HTML.
+                 document.getElementById('verification-code').innerText = "COD EXPIRAT/LIPSĂ";
+            }
         }
 
-        // Functia de update REALTIME de la joc
         function ascultaDateJoc(numeRoblox) {
-            if(userStatsListener) userStatsListener(); // Reset listener
-
-            // Ascultam direct in 'users/Nume'
+            if(userStatsListener) userStatsListener();
             userStatsListener = onValue(ref(db, `users/${numeRoblox}`), (snapshot) => {
                 const data = snapshot.val();
-                
                 if (data) {
-                    document.getElementById('debug-msg').innerText = "✅ Sincronizat in timp real cu: " + numeRoblox;
-
-                    // Dashboard update
+                    document.getElementById('debug-msg').innerText = "✅ Sincronizat: " + numeRoblox;
                     document.getElementById('dash-cash').innerText = "$" + (data.banii_cash || 0).toLocaleString();
                     document.getElementById('dash-bank').innerText = "$" + (data.banii_banca || 0).toLocaleString();
                     document.getElementById('dash-job').innerText = data.job_curent || "N/A";
                     document.getElementById('dash-hours').innerText = data.ore_jucate || 0;
-                    if(data.avatar_url) document.getElementById('miniAvatar').src = data.avatar_url;
-
-                    // Profile update
+                    if(data.avatar_url) {
+                        document.getElementById('miniAvatar').src = data.avatar_url;
+                        document.getElementById('prof-big-avatar').src = data.avatar_url;
+                    }
                     document.getElementById('prof-name').innerText = numeRoblox;
-                    if(data.avatar_url) document.getElementById('prof-big-avatar').src = data.avatar_url;
-                    
-                    document.getElementById('prof-level').innerText = data.level || 1;
-                    document.getElementById('prof-hours-2').innerText = data.ore_jucate || 0;
-                    document.getElementById('prof-job-2').innerText = data.job_curent || "N/A";
-                    document.getElementById('prof-phone').innerText = data.telefon || "Fara telefon";
                     document.getElementById('prof-faction').innerText = data.factiune || "Civil";
-                    document.getElementById('prof-rank').innerText = data.rank || 0;
-                    document.getElementById('prof-rp').innerText = data.rp || 0;
-                    document.getElementById('prof-cars').innerText = (data.masini_detinute || 0) + " Vehicule";
-                    if(data.last_online) document.getElementById('prof-seen').innerText = data.last_online;
-                } else {
-                    document.getElementById('debug-msg').innerText = "⚠️ Aștept date de la server...";
+                    document.getElementById('prof-phone').innerText = data.telefon || "N/A";
                 }
             });
         }
-
+        
         window.cautaJucatorManual = function() {
             const nume = document.getElementById('searchInput').value;
-            // Functia de cautare manuala ramane pe 'once' ca sa nu strice listenerul principal
-            if(nume) {
-                get(ref(db, `users/${nume}`)).then(s => {
-                    if(s.exists()) {
-                        // Doar un exemplu simplu, in realitate ar trebui sa populeze altfel daca vrei sa vezi profilul altcuiva
-                        alert("User gasit: " + nume + " (Cash: " + s.val().banii_cash + ")");
-                    } else alert("Nu exista userul.");
-                });
-            }
+            if(nume) ascultaDateJoc(nume); // Simplificat pentru testare
         }
     </script>
 </body>
