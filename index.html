@@ -8,7 +8,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
     <style>
-        /* --- CSS GENERAL --- */
+        /* --- CSS GENERAL (DESIGN-UL TĂU ORIGINAL) --- */
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
         body { display: flex; background-color: #121212; color: #e0e0e0; height: 100vh; overflow: hidden; }
 
@@ -126,7 +126,6 @@
         .badges-container { display: flex; gap: 10px; justify-content: center; }
         .badge { padding: 5px 15px; border-radius: 20px; font-size: 12px; font-weight: bold; color: #fff; }
         .badge-vip { background: linear-gradient(45deg, #f1c40f, #f39c12); color: #000; }
-        .badge-admin { background: linear-gradient(45deg, #e74c3c, #c0392b); }
         .badge-premium { background: linear-gradient(45deg, #9b59b6, #8e44ad); }
 
         /* Tabs Navigation */
@@ -227,7 +226,7 @@
                     <h3 style="color:#fff; margin-bottom: 15px; border-bottom: 1px solid #333; width:100%; padding-bottom:10px;">Jurnal Activitate</h3>
                     <div style="width:100%; color:#888; font-size:14px;">
                         <p><i class="fas fa-check-circle" style="color:#00ff88; margin-right:10px;"></i> Te-ai conectat la panel cu succes.</p>
-                        <p style="margin-top:10px;"><i class="fas fa-server" style="color:#3498db; margin-right:10px;"></i> Verificare sincronizare...</p>
+                        <p style="margin-top:10px;"><i class="fas fa-server" style="color:#3498db; margin-right:10px;"></i> Sincronizare cu Roblox DataStore...</p>
                         <p id="debug-msg" style="color: #666; font-size: 12px; margin-top: 10px;">(Status conectare va apărea aici)</p>
                     </div>
                 </div>
@@ -247,8 +246,23 @@
                 <div class="profile-layout">
                     <div class="profile-sidebar">
                         <div class="panel-card">
-                            <h4 style="color:#fff; margin-bottom:15px; border-bottom:1px solid #333; padding-bottom:10px;">Vehicule</h4>
+                            <h4 style="color:#fff; margin-bottom:15px; border-bottom:1px solid #333; padding-bottom:10px;">Backpack</h4>
                             <div class="backpack-item">
+                                <i class="fas fa-box backpack-icon"></i>
+                                <div>
+                                    <div style="color:#fff; font-weight:600;">High Quality Kit</div>
+                                    <div style="color:#666; font-size:12px;">Reparații Avansate</div>
+                                </div>
+                            </div>
+                            <div class="backpack-item">
+                                <i class="fas fa-mobile-alt backpack-icon" style="color:#3498db"></i>
+                                <div>
+                                    <div style="color:#fff; font-weight:600;">iPhone 14</div>
+                                    <div style="color:#666; font-size:12px;">Telefon Mobil</div>
+                                </div>
+                            </div>
+                            
+                            <div class="backpack-item" style="border: 1px solid #00ff88;">
                                 <i class="fas fa-car backpack-icon"></i>
                                 <div>
                                     <div style="color:#fff; font-weight:600;">Mașini Personale</div>
@@ -262,6 +276,8 @@
                         <div class="profile-tabs">
                             <div class="tab-btn active-tab"><i class="fas fa-user"></i> Profile</div>
                             <div class="tab-btn"><i class="fas fa-home"></i> Properties</div>
+                            <div class="tab-btn"><i class="fas fa-dumbbell"></i> Skills</div>
+                            <div class="tab-btn"><i class="fas fa-history"></i> Faction History</div>
                         </div>
 
                         <div class="panel-card" style="background:#1f1f1f; padding: 25px; border-radius:12px; border:1px solid #2a2a2a;">
@@ -311,9 +327,9 @@
         import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, onAuthStateChanged, signOut, sendEmailVerification } from "https://www.gstatic.com/firebasejs/10.0.0/firebase-auth.js";
         import { getDatabase, ref, set, get, child, update } from "https://www.gstatic.com/firebasejs/10.0.0/firebase-database.js";
 
-        // CONFIGURAREA TA (Nu o sterge!)
+        // CONFIGURAREA TA (REPARAT API KEY cu F mare)
         const firebaseConfig = {
-            apiKey: "AIzaSyDwD_aL4yioTc16MOCxz7cVec_eSKfABlo",
+            apiKey: "AIzaSyDwD_aL4yioTc16MOCxz7cVec_eSKFABlo",
             authDomain: "projsmprobl.firebaseapp.com",
             databaseURL: "https://projsmprobl-default-rtdb.europe-west1.firebasedatabase.app",
             projectId: "projsmprobl",
@@ -327,12 +343,12 @@
         const auth = getAuth(app);
         const db = getDatabase(app);
 
-        // --- SISTEM FIX PENTRU TINE ---
-        // Scrie in consola browserului: schimbaNume("sbyk") pentru a repara contul curent
+        // --- REPARARE CONT (Asta trebuie rulata in consola F12: schimbaNume("sbyk")) ---
         window.schimbaNume = function(numeNou) {
             if(auth.currentUser) {
                 update(ref(db, 'site_users/' + auth.currentUser.uid), { robloxUsername: numeNou })
-                .then(() => { alert("Nume schimbat in " + numeNou + "! Da refresh."); location.reload(); });
+                .then(() => { alert("Nume schimbat in " + numeNou + "! Da refresh."); location.reload(); })
+                .catch((e) => { alert("EROARE PERMISIUNI: Verifica regulile Firebase! " + e.message); });
             } else { console.log("Nu esti logat!"); }
         }
 
@@ -361,7 +377,6 @@
             if(!robloxName || !email || !pass) { alert("Completează tot!"); return; }
 
             createUserWithEmailAndPassword(auth, email, pass).then((uc) => {
-                // Salvam numele in site_users
                 set(ref(db, 'site_users/' + uc.user.uid), { robloxUsername: robloxName, email: email });
                 sendEmailVerification(uc.user).then(() => { alert("Cont creat! Verifică mail-ul."); toggleForms(); });
             }).catch((e) => alert("Eroare: " + e.message));
@@ -402,7 +417,7 @@
                     // Incarcam datele
                     incarcaStats(myRobloxName);
                 } else {
-                    alert("Eroare critica: Contul tau de site nu are un nume de Roblox asociat. Te rog fa-ti alt cont.");
+                    document.getElementById('debug-msg').innerText = "Cont fara nume Roblox! Scrie in consola: schimbaNume('sbyk')";
                 }
             } else {
                 authDiv.style.display = 'flex';
