@@ -8,7 +8,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
     <style>
-        /* Resetare generală */
+        /* --- CSS EXISTENT (Nu am sters nimic, doar am adaugat Login) --- */
         * {
             margin: 0;
             padding: 0;
@@ -24,7 +24,47 @@
             overflow: hidden;
         }
 
-        /* --- SIDEBAR (Meniul Stânga) --- */
+        /* --- STILURI NOI PENTRU LOGIN (Adaugate acum) --- */
+        #auth-container {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            background: linear-gradient(135deg, #0f0c29, #302b63, #24243e);
+            display: flex; justify-content: center; align-items: center; z-index: 100;
+        }
+        
+        .auth-box {
+            background: rgba(255, 255, 255, 0.05);
+            padding: 40px; border-radius: 15px;
+            backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.1);
+            width: 350px; text-align: center; box-shadow: 0 0 20px rgba(0,0,0,0.5);
+        }
+
+        .auth-box h2 { margin-bottom: 20px; color: #fff; }
+        .auth-box input {
+            width: 100%; padding: 12px; margin: 10px 0;
+            background: rgba(0,0,0,0.3); border: 1px solid #444; color: #fff; border-radius: 5px; outline:none;
+        }
+        .btn-auth {
+            width: 100%; padding: 12px; background: #00ff88; border: none;
+            color: #000; font-weight: bold; cursor: pointer; border-radius: 5px; margin-top: 10px; transition: 0.3s;
+        }
+        .btn-auth:hover { background: #00cc6a; }
+        .switch-auth { margin-top: 15px; font-size: 12px; cursor: pointer; color: #aaa; text-decoration: underline; }
+        
+        /* Warning Email */
+        .email-warning {
+            background: rgba(255, 77, 77, 0.2); border: 1px solid #ff4d4d; color: #ff4d4d;
+            padding: 15px; border-radius: 8px; margin-bottom: 20px; display: none; align-items: center; gap: 10px;
+        }
+
+        /* Containerul principal ascuns initial */
+        #dashboard-container {
+            display: none; /* Ascuns pana la login */
+            width: 100%;
+            height: 100%;
+            display: flex;
+        }
+
+        /* --- CONTINUARE CSS VECHI --- */
         .sidebar {
             width: 260px;
             background-color: #1a1a1a;
@@ -53,13 +93,8 @@
             color: #00ff88; /* Verde Neon */
         }
 
-        .sidebar ul {
-            list-style: none;
-        }
-
-        .sidebar ul li {
-            margin-bottom: 10px;
-        }
+        .sidebar ul { list-style: none; }
+        .sidebar ul li { margin-bottom: 10px; }
 
         .sidebar ul li a {
             text-decoration: none;
@@ -72,12 +107,7 @@
             transition: all 0.3s ease;
         }
 
-        .sidebar ul li a i {
-            margin-right: 15px;
-            width: 20px;
-            text-align: center;
-        }
-
+        .sidebar ul li a i { margin-right: 15px; width: 20px; text-align: center; }
         .sidebar ul li a:hover, .sidebar ul li.active a {
             background-color: #00ff88;
             color: #000;
@@ -85,15 +115,9 @@
             transform: translateX(5px);
         }
 
-        .logout {
-            margin-top: auto;
-        }
+        .logout { margin-top: auto; }
+        .logout a { color: #ff4d4d !important; cursor: pointer; }
 
-        .logout a {
-            color: #ff4d4d !important;
-        }
-
-        /* --- CONTENT (Partea Dreaptă) --- */
         .main-content {
             flex: 1;
             padding: 40px;
@@ -101,7 +125,6 @@
             background: radial-gradient(circle at top right, #1e1e1e, #121212);
         }
 
-        /* Header */
         header {
             display: flex;
             justify-content: space-between;
@@ -126,29 +149,13 @@
             outline: none;
         }
 
-        .user-profile {
-            display: flex;
-            align-items: center;
-            gap: 15px;
-        }
-
+        .user-profile { display: flex; align-items: center; gap: 15px; }
         .user-profile img {
-            width: 50px;
-            height: 50px;
-            border-radius: 50%;
-            border: 2px solid #00ff88;
+            width: 50px; height: 50px; border-radius: 50%; border: 2px solid #00ff88;
         }
+        .user-text h4 { color: #fff; }
+        .user-text p { font-size: 12px; color: #888; }
 
-        .user-text h4 {
-            color: #fff;
-        }
-        
-        .user-text p {
-            font-size: 12px;
-            color: #888;
-        }
-
-        /* Carduri Statistici */
         .stats-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
@@ -166,32 +173,11 @@
             transition: transform 0.3s;
         }
 
-        .card:hover {
-            transform: translateY(-5px);
-            border-color: #00ff88;
-        }
+        .card:hover { transform: translateY(-5px); border-color: #00ff88; }
+        .card i { font-size: 35px; margin-bottom: 15px; color: #00ff88; }
+        .card h3 { font-size: 14px; color: #888; text-transform: uppercase; letter-spacing: 1px; }
+        .card p { font-size: 24px; font-weight: bold; color: #fff; margin-top: 5px; }
 
-        .card i {
-            font-size: 35px;
-            margin-bottom: 15px;
-            color: #00ff88;
-        }
-
-        .card h3 {
-            font-size: 14px;
-            color: #888;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-        }
-
-        .card p {
-            font-size: 24px;
-            font-weight: bold;
-            color: #fff;
-            margin-top: 5px;
-        }
-
-        /* Tabel Logs */
         .logs-section h3 {
             margin-bottom: 20px;
             border-left: 4px solid #00ff88;
@@ -211,184 +197,266 @@
             text-align: left;
             border-bottom: 1px solid #2a2a2a;
         }
-
-        table th {
-            background-color: #252525;
-            color: #00ff88;
-            font-weight: 600;
-        }
-
-        table tr:hover {
-            background-color: #222;
-        }
+        table th { background-color: #252525; color: #00ff88; font-weight: 600; }
+        table tr:hover { background-color: #222; }
     </style>
 </head>
 <body>
 
-    <div class="sidebar">
-        <div class="logo">
-            <h2>SEVID<span>STUDIOS</span></h2>
+    <div id="auth-container">
+        <div class="auth-box" id="login-form">
+            <h2>🔐 Login Panel</h2>
+            <input type="email" id="login-email" placeholder="Email">
+            <input type="password" id="login-pass" placeholder="Parolă">
+            <button class="btn-auth" onclick="loginUser()">Intră în cont</button>
+            <p class="switch-auth" onclick="toggleForms()">Nu ai cont? Înregistrează-te</p>
         </div>
-        <ul>
-            <li class="active"><a href="#"><i class="fas fa-chart-line"></i> Dashboard</a></li>
-            <li><a href="#"><i class="fas fa-user-circle"></i> Profilul Meu</a></li>
-            <li><a href="#"><i class="fas fa-users"></i> Facțiuni</a></li>
-            <li><a href="#"><i class="fas fa-file-contract"></i> Reclamații</a></li>
-            <li><a href="#"><i class="fas fa-store"></i> Shop Premium</a></li>
-        </ul>
-        <div class="logout">
-            <a href="#"><i class="fas fa-sign-out-alt"></i> Ieșire</a>
+
+        <div class="auth-box" id="register-form" style="display: none;">
+            <h2>📝 Înregistrare</h2>
+            <input type="text" id="reg-roblox" placeholder="Nume Exact Roblox (pentru stats)">
+            <input type="email" id="reg-email" placeholder="Email">
+            <input type="password" id="reg-pass" placeholder="Parolă">
+            <button class="btn-auth" onclick="registerUser()">Creează Cont</button>
+            <p class="switch-auth" onclick="toggleForms()">Ai deja cont? Loghează-te</p>
         </div>
     </div>
 
-    <div class="main-content">
-        <header>
-            <div class="welcome-text">
-                <h1>Panou Utilizator</h1>
-                <p>Vezi statisticile tale în timp real</p>
+    <div id="dashboard-container">
+        
+        <div class="sidebar">
+            <div class="logo">
+                <h2>SEVID<span>STUDIOS</span></h2>
             </div>
-            
-            <div class="search-box">
-                <i class="fas fa-search"></i>
-                <input type="text" id="searchInput" placeholder="Caută jucător (Ex: Stefan)...">
-                <button onclick="cautaJucator()" style="background: #00ff88; border: none; padding: 5px 15px; border-radius: 20px; cursor: pointer; font-weight: bold; margin-left: 10px;">Caută</button>
+            <ul>
+                <li class="active"><a href="#"><i class="fas fa-chart-line"></i> Dashboard</a></li>
+                <li><a href="#"><i class="fas fa-user-circle"></i> Profilul Meu</a></li>
+                <li><a href="#"><i class="fas fa-users"></i> Facțiuni</a></li>
+                <li><a href="#"><i class="fas fa-file-contract"></i> Reclamații</a></li>
+                <li><a href="#"><i class="fas fa-store"></i> Shop Premium</a></li>
+            </ul>
+            <div class="logout">
+                <a onclick="logoutUser()"><i class="fas fa-sign-out-alt"></i> Ieșire</a>
+            </div>
+        </div>
+
+        <div class="main-content">
+            <div id="email-alert" class="email-warning">
+                <i class="fas fa-exclamation-triangle"></i>
+                <span>Emailul tău <b>(<span id="alert-email-addr"></span>)</b> nu este confirmat!</span>
+                <button onclick="resendVerification()" style="background:none; border:none; color:#fff; text-decoration:underline; cursor:pointer; margin-left:auto;">Retrimite Email</button>
             </div>
 
-            <div class="user-profile">
-                <div class="user-text">
-                    <h4 id="headerUsername">Vizitator</h4>
-                    <p>Status: Online</p>
+            <header>
+                <div class="welcome-text">
+                    <h1 id="welcome-msg">Panou Utilizator</h1>
+                    <p>Vezi statisticile tale în timp real</p>
                 </div>
-                <img src="https://tr.rbxcdn.com/535451733604f3780376d54833215904/150/150/AvatarHeadshot/Png" alt="Avatar" id="headerAvatar">
-            </div>
-        </header>
+                
+                <div class="search-box">
+                    <i class="fas fa-search"></i>
+                    <input type="text" id="searchInput" placeholder="Caută alt jucător...">
+                    <button onclick="cautaJucatorManual()" style="background: #00ff88; border: none; padding: 5px 15px; border-radius: 20px; cursor: pointer; font-weight: bold; margin-left: 10px;">Caută</button>
+                </div>
 
-        <div class="stats-grid">
-            <div class="card">
-                <i class="fas fa-wallet"></i>
-                <h3>Bani Cash</h3>
-                <p id="displayCash">$0</p>
-            </div>
-            <div class="card">
-                <i class="fas fa-university"></i>
-                <h3>Bani Bancă</h3>
-                <p id="displayBank">$0</p>
-            </div>
-            <div class="card">
-                <i class="fas fa-briefcase"></i>
-                <h3>Job Curent</h3>
-                <p id="displayJob">Șomer</p>
-            </div>
-            <div class="card">
-                <i class="fas fa-clock"></i>
-                <h3>Ore Jucate</h3>
-                <p id="displayHours">0</p>
-            </div>
-        </div>
+                <div class="user-profile">
+                    <div class="user-text">
+                        <h4 id="headerUsername">Vizitator</h4>
+                        <p>Status: Online</p>
+                    </div>
+                    <img src="https://tr.rbxcdn.com/535451733604f3780376d54833215904/150/150/AvatarHeadshot/Png" alt="Avatar" id="headerAvatar">
+                </div>
+            </header>
 
-        <div class="logs-section">
-            <h3>Jurnal Activitate Recentă</h3>
-            <table>
-                <thead>
-                    <tr>
-                        <th>Tip Acțiune</th>
-                        <th>Descriere</th>
-                        <th>Data & Ora</th>
-                    </tr>
-                </thead>
-                <tbody id="logsTable">
-                    <tr>
-                        <td>System</td>
-                        <td>Așteptare conectare jucător...</td>
-                        <td>Acum</td>
-                    </tr>
-                </tbody>
-            </table>
+            <div class="stats-grid">
+                <div class="card">
+                    <i class="fas fa-wallet"></i>
+                    <h3>Bani Cash</h3>
+                    <p id="displayCash">$0</p>
+                </div>
+                <div class="card">
+                    <i class="fas fa-university"></i>
+                    <h3>Bani Bancă</h3>
+                    <p id="displayBank">$0</p>
+                </div>
+                <div class="card">
+                    <i class="fas fa-briefcase"></i>
+                    <h3>Job Curent</h3>
+                    <p id="displayJob">Șomer</p>
+                </div>
+                <div class="card">
+                    <i class="fas fa-clock"></i>
+                    <h3>Ore Jucate</h3>
+                    <p id="displayHours">0</p>
+                </div>
+            </div>
+
+            <div class="logs-section">
+                <h3>Jurnal Activitate Recentă</h3>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Tip Acțiune</th>
+                            <th>Descriere</th>
+                            <th>Data & Ora</th>
+                        </tr>
+                    </thead>
+                    <tbody id="logsTable">
+                        <tr>
+                            <td>System</td>
+                            <td>Așteptare date...</td>
+                            <td>Acum</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
         </div>
     </div>
 
-    <script>
-        // ---------------------------------------------------------
-        // ⚠️ CONFIGURARE: PUNE LINK-UL TĂU FIREBASE MAI JOS ⚠️
-        // ---------------------------------------------------------
-        const CONSTANTA_URL_FIREBASE = "https://projsmprobl-default-rtdb.europe-west1.firebasedatabase.app/"; 
-        // Nu uita sa lasi slash-ul '/' la final!
-        // ---------------------------------------------------------
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.0.0/firebase-app.js";
+        import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, onAuthStateChanged, signOut, sendEmailVerification } from "https://www.gstatic.com/firebasejs/10.0.0/firebase-auth.js";
+        import { getDatabase, ref, set, get, child } from "https://www.gstatic.com/firebasejs/10.0.0/firebase-database.js";
 
-        // Această funcție este apelată când apeși butonul "Caută"
-        async function cautaJucator() {
-            const numeInput = document.getElementById('searchInput').value;
-            
-            if (!numeInput) {
-                alert("Te rog scrie un nume!");
-                return;
+        // ------------------------------------------------------------------
+        // ⚠️ ZONA DE CONFIGURARE: PUNE AICI CODUL TĂU COPIAT ANTERIOR ⚠️
+        // ------------------------------------------------------------------
+        const firebaseConfig = {
+            apiKey: "AIzaSyDwD_aL4yioTc16MOCxz7cVec_eSKFABlo",
+            authDomain: "projsmprobl.firebaseapp.com",
+            databaseURL: "https://projsmprobl-default-rtdb.europe-west1.firebasedatabase.app",
+            projectId: "projsmprobl",
+            storageBucket: "projsmprobl.firebasestorage.app",
+            messagingSenderId: "1024885479778",
+            appId: "1:1024885479778:web:3ae2eab4fe383b76e8b43b",
+            measurementId: "G-MNHTTG5XBB"
+        };
+        // ------------------------------------------------------------------
+
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getDatabase(app);
+
+        // --- SISTEM TOGGLE FORMS ---
+        window.toggleForms = function() {
+            const login = document.getElementById('login-form');
+            const reg = document.getElementById('register-form');
+            if(login.style.display === 'none') {
+                login.style.display = 'block'; reg.style.display = 'none';
+            } else {
+                login.style.display = 'none'; reg.style.display = 'block';
             }
+        }
 
-            // Arătăm că se încarcă
-            document.getElementById('headerUsername').innerText = "Se caută...";
+        // --- 1. REGISTER ---
+        window.registerUser = function() {
+            const robloxName = document.getElementById('reg-roblox').value;
+            const email = document.getElementById('reg-email').value;
+            const pass = document.getElementById('reg-pass').value;
 
-            try {
-                // Facem request către baza de date Firebase
-                const response = await fetch(`${CONSTANTA_URL_FIREBASE}users/${numeInput}.json`);
-                
-                // Verificăm dacă request-ul a reușit tehnic
-                if (!response.ok) {
-                    throw new Error("Eroare la conexiunea cu baza de date.");
+            if(!robloxName || !email || !pass) { alert("Completează tot!"); return; }
+
+            createUserWithEmailAndPassword(auth, email, pass)
+                .then((userCredential) => {
+                    const user = userCredential.user;
+                    // Salvam legatura UID -> RobloxName
+                    set(ref(db, 'site_users/' + user.uid), {
+                        robloxUsername: robloxName,
+                        email: email
+                    });
+                    sendEmailVerification(user).then(() => {
+                        alert("Cont creat! Verifică email-ul pentru confirmare.");
+                        toggleForms(); // Trimitem la login
+                    });
+                })
+                .catch((e) => alert("Eroare: " + e.message));
+        }
+
+        // --- 2. LOGIN ---
+        window.loginUser = function() {
+            const email = document.getElementById('login-email').value;
+            const pass = document.getElementById('login-pass').value;
+            signInWithEmailAndPassword(auth, email, pass).catch((e) => alert("Date incorecte!"));
+        }
+
+        // --- 3. LOGOUT ---
+        window.logoutUser = function() {
+            signOut(auth).then(() => location.reload());
+        }
+
+        // --- 4. RETRIMITE EMAIL ---
+        window.resendVerification = function() {
+            if(auth.currentUser) sendEmailVerification(auth.currentUser).then(()=>alert("Trimis!"));
+        }
+
+        // --- 5. LOGICA PRINCIPALA (VERIFICARE STARE) ---
+        onAuthStateChanged(auth, async (user) => {
+            const authDiv = document.getElementById('auth-container');
+            const dashDiv = document.getElementById('dashboard-container');
+
+            if (user) {
+                // USER LOGAT
+                authDiv.style.display = 'none';
+                dashDiv.style.display = 'flex';
+
+                // Verificam email
+                if (!user.emailVerified) {
+                    document.getElementById('email-alert').style.display = 'flex';
+                    document.getElementById('alert-email-addr').innerText = user.email;
+                } else {
+                    document.getElementById('email-alert').style.display = 'none';
                 }
 
-                const data = await response.json();
+                // Cautam numele de Roblox al userului logat
+                const snapshot = await get(child(ref(db), `site_users/${user.uid}`));
+                if (snapshot.exists()) {
+                    const myRobloxName = snapshot.val().robloxUsername;
+                    document.getElementById('welcome-msg').innerText = "Salut, " + myRobloxName + "!";
+                    // Incarcam datele LUI
+                    incarcaStats(myRobloxName);
+                }
 
-                // Verificăm dacă am primit date (dacă jucătorul există)
-                if (data) {
-                    // Actualizăm interfața cu datele primite
-                    console.log("Date primite:", data);
+            } else {
+                // USER NELOGAT
+                authDiv.style.display = 'flex';
+                dashDiv.style.display = 'none';
+            }
+        });
 
-                    // 1. Nume și Avatar
-                    document.getElementById('headerUsername').innerText = numeInput;
-                    if(data.avatar_url) {
-                        document.getElementById('headerAvatar').src = data.avatar_url;
-                    }
-
-                    // 2. Statistici
+        // --- 6. FUNCTIA DE INCARCARE DATE (Universala) ---
+        async function incarcaStats(numeRoblox) {
+            try {
+                const snapshot = await get(child(ref(db), `users/${numeRoblox}`));
+                if (snapshot.exists()) {
+                    const data = snapshot.val();
+                    
+                    // Update UI
+                    document.getElementById('headerUsername').innerText = numeRoblox;
+                    if(data.avatar_url) document.getElementById('headerAvatar').src = data.avatar_url;
+                    
                     document.getElementById('displayCash').innerText = "$" + (data.banii_cash || 0).toLocaleString();
                     document.getElementById('displayBank').innerText = "$" + (data.banii_banca || 0).toLocaleString();
                     document.getElementById('displayJob').innerText = data.job_curent || "Șomer";
                     document.getElementById('displayHours').innerText = data.ore_jucate || 0;
 
-                    // 3. Actualizăm tabelul de logs (simulat)
-                    const logsHTML = `
-                        <tr>
-                            <td><span style="color:#00ff88">Login</span></td>
-                            <td>Datele au fost sincronizate cu succes.</td>
-                            <td>Acum</td>
-                        </tr>
-                        <tr>
-                            <td>Server</td>
-                            <td>Ultima salvare din Roblox.</td>
-                            <td>Recent</td>
-                        </tr>
+                    // Logs (Fake/Demo)
+                    document.getElementById('logsTable').innerHTML = `
+                        <tr><td><span style="color:#00ff88">Sync</span></td><td>Date încărcate.</td><td>Acum</td></tr>
                     `;
-                    document.getElementById('logsTable').innerHTML = logsHTML;
-
                 } else {
-                    alert("Jucătorul nu a fost găsit! Asigură-te că a intrat pe server și s-au salvat datele.");
-                    document.getElementById('headerUsername').innerText = "Necunoscut";
+                    // Daca e cont nou pe site dar nu a intrat pe server
+                    document.getElementById('displayCash').innerText = "N/A";
+                    alert("Userul " + numeRoblox + " nu are date salvate din joc încă.");
                 }
-
-            } catch (error) {
-                console.error(error);
-                alert("Eroare! Verifică dacă ai pus link-ul corect de Firebase în cod.");
-            }
+            } catch (e) { console.error(e); }
         }
 
-        // Permite apăsarea tastei ENTER în căsuța de căutare
-        document.getElementById("searchInput").addEventListener("keypress", function(event) {
-            if (event.key === "Enter") {
-                cautaJucator();
-            }
-        });
+        // --- 7. CAUTARE MANUALA (Pastrata din versiunea veche) ---
+        window.cautaJucatorManual = function() {
+            const nume = document.getElementById('searchInput').value;
+            if(nume) incarcaStats(nume);
+        }
+        
     </script>
 </body>
 </html>
-
-
