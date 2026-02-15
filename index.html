@@ -273,6 +273,14 @@
                     </div>
 
                     <div class="profile-main">
+                        <div class="panel-card" style="background:#1f1f1f; padding: 20px; border-radius:12px; border:1px solid #2a2a2a; margin-bottom: 20px;">
+                            <h4 style="color:#fff; margin-bottom:15px;"><i class="fas fa-cog"></i> Setări Conectare</h4>
+                            <div style="display: flex; gap: 10px; align-items: center;">
+                                <input type="text" id="input-schimba-nume" placeholder="Nume Roblox Exact" style="background: #111; border: 1px solid #444; color: #fff; padding: 10px; border-radius: 6px; flex: 1;">
+                                <button onclick="salveazaNumeNou()" style="background: #00ff88; color: #000; border: none; padding: 10px 20px; border-radius: 6px; cursor: pointer; font-weight: bold;">Salvează</button>
+                            </div>
+                            <p style="color: #666; font-size: 12px; margin-top: 10px;">* Asigură-te că scrii numele exact cum este în joc (Litere Mari/mici).</p>
+                        </div>
                         <div class="profile-tabs">
                             <div class="tab-btn active-tab"><i class="fas fa-user"></i> Profile</div>
                             <div class="tab-btn"><i class="fas fa-home"></i> Properties</div>
@@ -343,7 +351,19 @@
         const auth = getAuth(app);
         const db = getDatabase(app);
 
-        // --- REPARARE CONT (Asta trebuie rulata in consola F12: schimbaNume("sbyk")) ---
+        // --- FUNCTIA NOUA PENTRU UI ---
+        window.salveazaNumeNou = function() {
+            const numeNou = document.getElementById('input-schimba-nume').value;
+            if(!numeNou) return alert("Scrie un nume!");
+            
+            if(auth.currentUser) {
+                update(ref(db, 'site_users/' + auth.currentUser.uid), { robloxUsername: numeNou })
+                .then(() => { alert("Nume schimbat in " + numeNou + "! Da refresh."); location.reload(); })
+                .catch((e) => { alert("Eroare: " + e.message); });
+            } else { alert("Nu esti logat!"); }
+        }
+
+        // --- REPARARE CONT VECHI ---
         window.schimbaNume = function(numeNou) {
             if(auth.currentUser) {
                 update(ref(db, 'site_users/' + auth.currentUser.uid), { robloxUsername: numeNou })
@@ -414,10 +434,13 @@
                     console.log("Utilizator conectat pe site ca:", myRobloxName);
                     document.getElementById('debug-msg').innerText = "Conectat ca: " + myRobloxName + ". Se caută date...";
                     
+                    // -- AFISAM NUMELE IN INPUT PENTRU MODIFICARE --
+                    document.getElementById('input-schimba-nume').value = myRobloxName;
+
                     // Incarcam datele
                     incarcaStats(myRobloxName);
                 } else {
-                    document.getElementById('debug-msg').innerText = "Cont fara nume Roblox! Scrie in consola: schimbaNume('sbyk')";
+                    document.getElementById('debug-msg').innerText = "Cont fara nume Roblox! Seteaza numele la Profil!";
                 }
             } else {
                 authDiv.style.display = 'flex';
@@ -494,4 +517,3 @@
     </script>
 </body>
 </html>
-
