@@ -92,13 +92,8 @@
 }
 
 .auth-box input {
-    background: rgba(255, 255, 255, 0.03) !important;
-    border: 1px solid rgba(255, 255, 255, 0.1) !important;
-    padding: 18px !important;
-    border-radius: 15px !important;
-    margin-bottom: 20px !important;
-    font-size: 16px !important;
-    transition: 0.3s;
+    color: #ffffff !important; /* Textul pe care îl scrii va fi alb */
+    background: rgba(255, 255, 255, 0.05) !important; /* Fundal ușor transparent */
 }
 
 .auth-box input:focus {
@@ -267,13 +262,16 @@
             <p class="switch-auth" onclick="toggleForms()">Nu ai cont? Înregistrează-te</p>
         </div>
         <div class="auth-box" id="register-form" style="display: none;">
-            <h2>📝 Înregistrare</h2>
-            <input type="text" id="reg-roblox" placeholder="Nume Exact Roblox (ex: sbyk)">
-            <input type="email" id="reg-email" placeholder="Email">
-            <input type="password" id="reg-pass" placeholder="Parolă">
-            <button class="btn-auth" onclick="registerUser()">Creează Cont</button>
-            <p class="switch-auth" onclick="toggleForms()">Ai deja cont? Loghează-te</p>
-        </div>
+    <i class="fas fa-user-plus" style="font-size: 40px; color: #00ff88 !important; filter: none !important;"></i>
+    <h2>Înregistrare</h2>
+    
+    <input type="text" id="reg-roblox" placeholder="Nume Exact Roblox (ex: sbyk)">
+    <input type="email" id="reg-email" placeholder="Email">
+    <input type="password" id="reg-pass" placeholder="Parolă">
+    
+    <button class="btn-auth" onclick="registerUser()">Creează Cont</button>
+    <p class="switch-auth" onclick="toggleForms()">Ai deja cont? Loghează-te</p>
+</div>
     </div>
 
     <div id="dashboard-container">
@@ -589,6 +587,7 @@
     </script>
 </body>
 </html>
+
 
 
 
