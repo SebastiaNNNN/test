@@ -2,7 +2,7 @@
 <html lang="ro">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>RPG Panel - Advanced</title>
     
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -47,7 +47,6 @@
         .swal2-timer-progress-bar { background: #00ff88 !important; }
 
         /* --- FIX PENTRU EROARE (evită turtirea login-ului) --- */
-        /* Asta scoate alerta din fluxul normal și o pune peste tot, fără să împingă login-ul */
         div.swal2-container {
             position: fixed !important;
             top: 0 !important;
@@ -82,7 +81,6 @@
         }
 
         /* --- LOGIN STYLES --- */
-        /* Container Video */
         .video-background { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; pointer-events: none; overflow: hidden; }
         .video-background iframe {
             width: 200%; height: 200%; position: absolute; top: 50%; left: 50%;
@@ -94,7 +92,7 @@
         /* Center Login Panel */
         #auth-container {
             background: transparent !important;
-            display: none; /* Se activeaza din JS */
+            display: none; 
             justify-content: center;
             align-items: center;
         }
@@ -253,7 +251,62 @@
             padding: 12px 20px; border-radius: 8px; margin-bottom: 30px; display: none; align-items: center; justify-content: space-between;
         }
 
-        @media (max-width: 900px) { .profile-layout { grid-template-columns: 1fr; } }
+        /* --- [ADĂUGAT] RESPONSIVE / TELEFON --- */
+        /* CSS-ul de mai jos se activează doar pe ecrane mici (mobile/tablete) */
+        @media (max-width: 900px) {
+            .profile-layout { grid-template-columns: 1fr; }
+            
+            /* Sidebar-ul se ascunde și devine meniu lateral */
+            .sidebar {
+                position: fixed;
+                left: -100%; /* Ascuns în stânga */
+                top: 0;
+                height: 100%;
+                width: 280px;
+                z-index: 1001; /* Peste conținut */
+                transition: 0.3s;
+                background: #1a1a1a;
+            }
+            .sidebar.active-mobile {
+                left: 0; /* Apare */
+                box-shadow: 10px 0 50px rgba(0,0,0,0.8);
+            }
+
+            /* Overlay întunecat când meniul e deschis */
+            #mobile-overlay {
+                display: none;
+                position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+                background: rgba(0,0,0,0.7);
+                z-index: 1000;
+                backdrop-filter: blur(3px);
+            }
+            #mobile-overlay.active { display: block; }
+
+            /* Ajustări conținut principal */
+            body { flex-direction: column; overflow: auto; }
+            .main-content { width: 100%; padding: 20px; }
+
+            /* Header pe telefon */
+            header { flex-direction: column; align-items: flex-start; gap: 20px; }
+            .welcome-text-container { width: 100%; display: flex; align-items: center; justify-content: space-between; }
+            .mobile-menu-btn { display: inline-block !important; font-size: 24px; color: #fff; cursor: pointer; margin-right: 15px; }
+            
+            .search-box { width: 100%; }
+            .user-mini-profile { width: 100%; flex-direction: row-reverse; justify-content: space-between; }
+
+            /* Login Box Responsive */
+            .auth-box { width: 90% !important; padding: 40px 20px; }
+
+            /* Scroll la tabel */
+            .table-responsive { overflow-x: auto; }
+            .vehicles-table { min-width: 500px; } /* Forțează scroll dacă e prea mic */
+            
+            /* Scroll la tab-uri */
+            .profile-tabs { overflow-x: auto; white-space: nowrap; }
+        }
+
+        /* Ascunde butonul de meniu pe PC */
+        .mobile-menu-btn { display: none; }
     </style>
 </head>
 <body>
@@ -267,6 +320,8 @@
         <div class="loader"></div>
         <h3 style="color:white; letter-spacing: 2px;">SEVID<span style="color:#00ff88">STUDIOS</span></h3>
     </div>
+
+    <div id="mobile-overlay" onclick="toggleMobileMenu()"></div>
 
     <div id="verify-overlay">
         <div class="verify-box">
@@ -303,13 +358,13 @@
     </div>
 
     <div id="dashboard-container">
-        <div class="sidebar">
+        <div class="sidebar" id="sidebar">
             <div class="logo"><h2>SEVID<span>STUDIOS</span></h2></div>
             <ul>
-                <li id="nav-dashboard" onclick="navigateTo('/dashboard')">
+                <li id="nav-dashboard" onclick="navigateTo('/dashboard'); toggleMobileMenu()">
                     <a><i class="fas fa-chart-line"></i> Dashboard</a>
                 </li>
-                <li id="nav-profile" onclick="navigateTo('/profile')">
+                <li id="nav-profile" onclick="navigateTo('/profile'); toggleMobileMenu()">
                     <a><i class="fas fa-user-circle"></i> Profilul Meu</a>
                 </li>
                 <li><a><i class="fas fa-users"></i> Facțiuni</a></li>
@@ -326,9 +381,13 @@
             </div>
 
             <header>
-                <div class="welcome-text">
-                    <h1 id="page-title">Dashboard</h1>
-                    <p style="color:#666; font-size:14px;">Bine ai venit pe panel!</p>
+                <div class="welcome-text-container" style="display: flex; align-items: center; gap: 15px;">
+                    <i class="fas fa-bars mobile-menu-btn" onclick="toggleMobileMenu()"></i>
+                    
+                    <div class="welcome-text">
+                        <h1 id="page-title">Dashboard</h1>
+                        <p style="color:#666; font-size:14px;">Bine ai venit pe panel!</p>
+                    </div>
                 </div>
                 <div class="user-mini-profile">
                     <div class="search-box">
@@ -396,10 +455,12 @@
                             </div>
                             <div class="panel-card" style="background:#1f1f1f; padding: 25px; border-radius:12px; border:1px solid #2a2a2a;">
                                 <h4 style="color:#fff; margin-bottom:10px;"><i class="fas fa-car"></i> Vehicule Personale</h4>
-                                <table class="vehicles-table">
-                                    <thead><tr><th>Model</th><th>Nume</th><th>Culoare</th><th>KM</th><th>Status</th></tr></thead>
-                                    <tbody id="garage-list"><tr><td colspan="5" style="text-align:center; color:#666;">Se încarcă...</td></tr></tbody>
-                                </table>
+                                <div class="table-responsive">
+                                    <table class="vehicles-table">
+                                        <thead><tr><th>Model</th><th>Nume</th><th>Culoare</th><th>KM</th><th>Status</th></tr></thead>
+                                        <tbody id="garage-list"><tr><td colspan="5" style="text-align:center; color:#666;">Se încarcă...</td></tr></tbody>
+                                    </table>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -434,6 +495,16 @@
             toast: true, position: 'top-end', showConfirmButton: false, timer: 3000, timerProgressBar: true,
             background: '#1a1a1a', color: '#fff'
         });
+
+        // --- [ADĂUGAT] FUNCTIE MENIU MOBIL ---
+        window.toggleMobileMenu = function() {
+            const sidebar = document.getElementById('sidebar');
+            const overlay = document.getElementById('mobile-overlay');
+            if (sidebar && overlay) {
+                sidebar.classList.toggle('active-mobile');
+                overlay.classList.toggle('active');
+            }
+        }
 
         // --- SISTEM ROUTING (URL) ---
         window.navigateTo = function(path) {
@@ -648,4 +719,3 @@
     </script>
 </body>
 </html>
-
