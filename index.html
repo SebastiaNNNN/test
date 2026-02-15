@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="ro">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RPG Panel - User Dashboard</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+
+    <div class="sidebar">
+        <div class="logo">
+            <h2>💎 ROBLOX RPG</h2>
+        </div>
+        <ul>
+            <li class="active"><a href="#"><i class="fas fa-home"></i> Acasă</a></li>
+            <li><a href="#"><i class="fas fa-user"></i> Profilul Meu</a></li>
+            <li><a href="#"><i class="fas fa-users"></i> Facțiuni</a></li>
+            <li><a href="#"><i class="fas fa-gavel"></i> Reclamații</a></li>
+            <li><a href="#"><i class="fas fa-shopping-cart"></i> Shop</a></li>
+        </ul>
+        <div class="logout">
+            <a href="#"><i class="fas fa-sign-out-alt"></i> Deconectare</a>
+        </div>
+    </div>
+
+    <div class="main-content">
+        <header>
+            <h1>Salut, <span id="username">Jucator</span>!</h1>
+            <div class="user-info">
+                <span>Level: 15</span>
+                <img src="https://tr.rbxcdn.com/30DAY-Avatar-Headshot-Img" alt="Avatar">
+            </div>
+        </header>
+
+        <div class="stats-grid">
+            <div class="card cash">
+                <i class="fas fa-wallet"></i>
+                <h3>Bani Cash</h3>
+                <p id="cash">$1,500,000</p>
+            </div>
+            <div class="card bank">
+                <i class="fas fa-university"></i>
+                <h3>Bani Bancă</h3>
+                <p id="bank">$50,000,000</p>
+            </div>
+            <div class="card faction">
+                <i class="fas fa-shield-alt"></i>
+                <h3>Facțiune</h3>
+                <p>Police Department (Rank 5)</p>
+            </div>
+            <div class="card premium">
+                <i class="fas fa-gem"></i>
+                <h3>Premium Points</h3>
+                <p>500 PP</p>
+            </div>
+        </div>
+
+        <div class="logs-section">
+            <h3>Ultimile Activități</h3>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Acțiune</th>
+                        <th>Detalii</th>
+                        <th>Dată</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Login</td>
+                        <td>Te-ai conectat pe server.</td>
+                        <td>Azi, 14:00</td>
+                    </tr>
+                    <tr>
+                        <td>Transfer</td>
+                        <td>Ai primit $50k de la X.</td>
+                        <td>Azi, 12:30</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+</body>
+</html>
