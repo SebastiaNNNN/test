@@ -84,19 +84,13 @@
         /* Center Login Panel */
         /* Center Login Panel */
 #auth-container {
-    position: fixed; /* <--- ASTA E CHEIA. Îl fixează pe ecran */
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    
-    background: transparent !important;
-    /* display: none;  <-- Aceasta linie ramane comentata sau o stergi, 
-                           pentru ca JS-ul se ocupa de display (flex/none) */
-    display: none; 
-    justify-content: center;
-    align-items: center;
-    z-index: 50; /* Asigură-te că e peste fundal, dar sub SweetAlert (care are z-index mare) */
+    osition: fixed !important;
+    top: 0 !important;
+    left: 0 !important;
+    width: 100% !important;
+    height: 100% !important;
+    z-index: 10000 !important;
+    display: flex !important; /* Asigură că notificarea e centrată în overlay */
 }
 
         .auth-box {
@@ -664,4 +658,5 @@
     </script>
 </body>
 </html>
+
 
