@@ -6,6 +6,7 @@
     <title>RPG Panel - Advanced</title>
     
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
     <style>
         /* --- CSS GENERAL --- */
@@ -31,6 +32,20 @@
         }
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
 
+        /* --- MODERN SWEETALERT DARK THEME (ADAUGAT) --- */
+        .swal2-popup {
+            background: rgba(15, 15, 15, 0.95) !important;
+            backdrop-filter: blur(15px);
+            border: 1px solid rgba(0, 255, 136, 0.2) !important;
+            color: #fff !important;
+            border-radius: 25px !important;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.8) !important;
+        }
+        .swal2-title { color: #fff !important; font-weight: 800 !important; text-transform: uppercase; letter-spacing: 1px; }
+        .swal2-html-container { color: #ccc !important; }
+        .swal2-confirm { background: #00ff88 !important; color: #000 !important; font-weight: bold !important; border-radius: 12px !important; padding: 12px 30px !important; }
+        .swal2-timer-progress-bar { background: #00ff88 !important; }
+
         /* --- OVERLAY VERIFICARE --- */
         #verify-overlay {
             position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
@@ -49,92 +64,92 @@
 
         /* --- LOGIN STYLES --- */
         /* Nota: Default display none ca sa nu apara flicker */
-/* --- UPGRADE LOGIN MODERN (Glassmorphism) --- */
-/* Container Video */
-.video-background { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; pointer-events: none; overflow: hidden; }
-.video-background iframe {
-    /* Îl facem de 2 ori mai mare decât ecranul și îl micșorăm la loc cu scale */
-    /* Asta forțează YouTube să trimită stream-ul de rezoluție maximă */
-    width: 200%; 
-    height: 200%;
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%) scale(0.6); /* Scale 0.6 îl aduce la mărimea ecranului tău */
-    pointer-events: none;
-    filter: brightness(0.8) contrast(1.1); /* Îi dăm și puțin "pop" vizual */
-}
-.video-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: radial-gradient(circle, rgba(0,0,0,0.4) 0%, rgba(0,0,0,0.8) 100%); z-index: 0; }
+        /* --- UPGRADE LOGIN MODERN (Glassmorphism) --- */
+        /* Container Video */
+        .video-background { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; pointer-events: none; overflow: hidden; }
+        .video-background iframe {
+            /* Îl facem de 2 ori mai mare decât ecranul și îl micșorăm la loc cu scale */
+            /* Asta forțează YouTube să trimită stream-ul de rezoluție maximă */
+            width: 200%; 
+            height: 200%;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) scale(0.6); /* Scale 0.6 îl aduce la mărimea ecranului tău */
+            pointer-events: none;
+            filter: brightness(0.8) contrast(1.1); /* Îi dăm și puțin "pop" vizual */
+        }
+        .video-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: radial-gradient(circle, rgba(0,0,0,0.4) 0%, rgba(0,0,0,0.8) 100%); z-index: 0; }
 
-/* Center Login Panel */
-#auth-container {
-    background: transparent !important;
-    display: none; /* Se activeaza din JS */
-    justify-content: center;
-    align-items: center;
-}
+        /* Center Login Panel */
+        #auth-container {
+            background: transparent !important;
+            display: none; /* Se activeaza din JS */
+            justify-content: center;
+            align-items: center;
+        }
 
-.auth-box {
-    position: relative;
-    background: rgba(10, 10, 10, 0.85) !important; /* Aproape negru, foarte pro */
-    backdrop-filter: blur(25px) saturate(180%);
-    padding: 60px 45px;
-    border-radius: 30px;
-    border: 1px solid rgba(0, 255, 136, 0.2); /* Margine verde foarte fina */
-    width: 420px;
-    box-shadow: 0 40px 100px rgba(0, 0, 0, 0.9);
-    transition: 0.5s ease;
-}
+        .auth-box {
+            position: relative;
+            background: rgba(10, 10, 10, 0.85) !important; /* Aproape negru, foarte pro */
+            backdrop-filter: blur(25px) saturate(180%);
+            padding: 60px 45px;
+            border-radius: 30px;
+            border: 1px solid rgba(0, 255, 136, 0.2); /* Margine verde foarte fina */
+            width: 420px;
+            box-shadow: 0 40px 100px rgba(0, 0, 0, 0.9);
+            transition: 0.5s ease;
+        }
 
-.auth-box:hover {
-    border-color: rgba(0, 255, 136, 0.6);
-    box-shadow: 0 0 30px rgba(0, 255, 136, 0.1);
-}
+        .auth-box:hover {
+            border-color: rgba(0, 255, 136, 0.6);
+            box-shadow: 0 0 30px rgba(0, 255, 136, 0.1);
+        }
 
-.auth-box h2 {
-    font-size: 32px;
-    font-weight: 900;
-    text-transform: uppercase;
-    letter-spacing: 5px;
-    background: linear-gradient(to right, #fff, #00ff88);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    margin-bottom: 35px;
-}
+        .auth-box h2 {
+            font-size: 32px;
+            font-weight: 900;
+            text-transform: uppercase;
+            letter-spacing: 5px;
+            background: linear-gradient(to right, #fff, #00ff88);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 35px;
+        }
 
-.auth-box input {
-    background: rgba(255, 255, 255, 0.03) !important;
-    color: #ffffff !important; /* Textul pe care îl scrii va fi alb */
-    border: 1px solid rgba(255, 255, 255, 0.1) !important;
-    padding: 18px !important;
-    border-radius: 15px !important;
-    margin-bottom: 20px !important;
-    font-size: 16px !important;
-    transition: 0.3s;
-}
+        .auth-box input {
+            background: rgba(255, 255, 255, 0.03) !important;
+            color: #ffffff !important; /* Textul pe care îl scrii va fi alb */
+            border: 1px solid rgba(255, 255, 255, 0.1) !important;
+            padding: 18px !important;
+            border-radius: 15px !important;
+            margin-bottom: 20px !important;
+            font-size: 16px !important;
+            transition: 0.3s;
+        }
 
-.auth-box input:focus {
-    background: rgba(0, 255, 136, 0.05) !important;
-    border-color: #00ff88 !important;
-    box-shadow: 0 0 20px rgba(0, 255, 136, 0.1);
-}
+        .auth-box input:focus {
+            background: rgba(0, 255, 136, 0.05) !important;
+            border-color: #00ff88 !important;
+            box-shadow: 0 0 20px rgba(0, 255, 136, 0.1);
+        }
 
-.btn-auth {
-    background: #00ff88 !important;
-    color: #000 !important;
-    padding: 20px !important;
-    border-radius: 15px !important;
-    font-size: 16px !important;
-    font-weight: 900 !important;
-    letter-spacing: 2px !important;
-    margin-top: 25px !important;
-    transition: 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) !important;
-}
+        .btn-auth {
+            background: #00ff88 !important;
+            color: #000 !important;
+            padding: 20px !important;
+            border-radius: 15px !important;
+            font-size: 16px !important;
+            font-weight: 900 !important;
+            letter-spacing: 2px !important;
+            margin-top: 25px !important;
+            transition: 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) !important;
+        }
 
-.btn-auth:hover {
-    transform: scale(1.05) !important;
-    box-shadow: 0 15px 30px rgba(0, 255, 136, 0.4) !important;
-}
+        .btn-auth:hover {
+            transform: scale(1.05) !important;
+            box-shadow: 0 15px 30px rgba(0, 255, 136, 0.4) !important;
+        }
         .switch-auth { margin-top: 15px; font-size: 12px; cursor: pointer; color: #aaa; text-decoration: underline; }
 
         /* --- DASHBOARD CONTAINER --- */
@@ -415,6 +430,12 @@
         const db = getDatabase(app);
         let userStatsListener = null;
 
+        // --- DEFINIM TOAST (ADAUGAT) ---
+        const Toast = Swal.mixin({
+            toast: true, position: 'top-end', showConfirmButton: false, timer: 3000, timerProgressBar: true,
+            background: '#1a1a1a', color: '#fff'
+        });
+
         // --- SISTEM ROUTING (URL) ---
         window.navigateTo = function(path) {
             window.history.pushState({}, "", path);
@@ -567,22 +588,53 @@
             const robloxName = document.getElementById('reg-roblox').value.trim();
             const email = document.getElementById('reg-email').value;
             const pass = document.getElementById('reg-pass').value;
-            if(!robloxName || !email || !pass) return alert("Completează tot!");
+            
+            // MODIFICAT: SweetAlert in loc de alert
+            if(!robloxName || !email || !pass) return Toast.fire({ icon: 'warning', title: 'Completează tot!' });
+            
             const randomCode = Math.floor(1000 + Math.random() * 9000).toString();
             try {
                 const uc = await createUserWithEmailAndPassword(auth, email, pass);
                 await set(ref(db, 'site_users/' + uc.user.uid), { robloxUsername: robloxName, email: email, verified: false });
                 await set(ref(db, 'verification_codes/' + randomCode), { uid: uc.user.uid, robloxName: robloxName });
+                
+                // MODIFICAT: SweetAlert Success
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Cont creat!',
+                    text: 'Te-ai înregistrat cu succes. Acum te poți loga.',
+                    confirmButtonText: 'Perfect'
+                });
+
                 toggleForms();
-            } catch(e) { alert("Eroare: " + e.message); }
+            } catch(e) { 
+                // MODIFICAT: SweetAlert Error
+                Swal.fire({ icon: 'error', title: 'Eroare Înregistrare', text: e.message }); 
+            }
         }
 
         window.loginUser = () => {
             const email = document.getElementById('login-email').value;
             const pass = document.getElementById('login-pass').value;
-            signInWithEmailAndPassword(auth, email, pass).catch(e => alert(e.message));
+            
+            // MODIFICAT: SweetAlert in loc de alert
+            if(!email || !pass) return Toast.fire({ icon: 'warning', title: 'Completează tot!' });
+
+            signInWithEmailAndPassword(auth, email, pass)
+                .then(() => {
+                     Toast.fire({ icon: 'success', title: 'Te-ai logat cu succes!' });
+                })
+                .catch(e => {
+                    Swal.fire({ icon: 'error', title: 'Eroare Login', text: e.message });
+                });
         }
-        window.logoutUser = () => signOut(auth).then(() => { window.history.pushState({}, "", "/"); location.reload() });
+        
+        window.logoutUser = () => signOut(auth).then(() => { 
+            // Putem adauga un mic toast inainte de refresh daca se doreste, dar refresh-ul e rapid
+            window.history.pushState({}, "", "/"); 
+            location.reload() 
+        });
+
         window.activeazaVerificarea = async function() {
             if(!auth.currentUser) return;
             const snapshot = await get(ref(db, 'site_users/' + auth.currentUser.uid));
@@ -592,6 +644,7 @@
                 await update(ref(db, 'site_users/' + auth.currentUser.uid), { verified: false });
                 await set(ref(db, 'verification_codes/' + randomCode), { uid: auth.currentUser.uid, robloxName: siteData.robloxUsername });
                 document.getElementById('verification-code').innerText = "/link " + randomCode;
+                Toast.fire({ icon: 'info', title: 'Cod nou generat!' });
             }
         }
         window.cautaJucatorManual = function() {
@@ -601,11 +654,3 @@
     </script>
 </body>
 </html>
-
-
-
-
-
-
-
-
