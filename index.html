@@ -51,13 +51,42 @@
         /* Nota: Default display none ca sa nu apara flicker */
 /* --- UPGRADE LOGIN MODERN (Glassmorphism) --- */
 #auth-container {
-    position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-    background: url('https://www.roblox.com/asset-thumbnail/image?assetId=YOUR_GAME_ID&width=768&height=432&format=png'); /* Imagine din jocul tau */
-    background-size: cover;
-    background-position: center;
-    display: none; justify-content: center; align-items: center; z-index: 100;
+    background: transparent !important;
+    z-index: 100;
+}
+/* Containerul pentru Video de fundal */
+.video-background {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: -1;
+    pointer-events: none;
+    overflow: hidden;
 }
 
+.video-background iframe {
+    width: 100vw;
+    height: 56.25vw; /* Raport 16:9 */
+    min-height: 100vh;
+    min-width: 177.77vh; /* Raport 16:9 */
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+
+/* Overlay pentru a întuneca clipul și a scoate în evidență formularul */
+.video-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.6); /* Ajustează opacitatea aici */
+    z-index: 0;
+}
 /* Adăugăm un strat de întunecare peste fundal */
 #auth-container::before {
     content: ""; position: absolute; top: 0; left: 0; width: 100%; height: 100%;
@@ -65,15 +94,10 @@
 }
 
 .auth-box {
-    position: relative; /* Sa stea peste stratul negru */
-    background: rgba(255, 255, 255, 0.03); 
-    padding: 50px 40px;
-    border-radius: 24px;
+    background: rgba(255, 255, 255, 0.05) !important;
+    backdrop-filter: blur(15px) saturate(150%);
     border: 1px solid rgba(255, 255, 255, 0.1);
-    backdrop-filter: blur(20px); /* Efect de sticla */
-    width: 400px;
-    text-align: center;
-    box-shadow: 0 25px 50px rgba(0, 0, 0, 0.5), inset 0 0 20px rgba(255,255,255,0.05);
+    box-shadow: 0 0 40px rgba(0, 0, 0, 0.8);
 }
 
 .auth-box h2 { 
@@ -214,6 +238,11 @@
     </style>
 </head>
 <body>
+    <div class="video-background">
+    <div class="video-overlay"></div>
+    <iframe src="https://www.youtube.com/embed/BiOPO-nKj7s?autoplay=1&mute=1&controls=0&loop=1&playlist=BiOPO-nKj7s&showinfo=0&rel=0&modestbranding=1&iv_load_policy=3&start=0" 
+            frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
+</div>
 
     <div id="loading-screen">
         <div class="loader"></div>
@@ -567,4 +596,5 @@
     </script>
 </body>
 </html>
+
 
