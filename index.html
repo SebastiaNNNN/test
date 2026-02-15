@@ -8,41 +8,30 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
     <style>
-        /* --- CSS GENERAL --- */
+        /* --- CSS GENERAL (DESIGN-UL TĂU ORIGINAL) --- */
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
         body { display: flex; background-color: #121212; color: #e0e0e0; height: 100vh; overflow: hidden; }
 
-        /* --- SCROLLBAR --- */
+        /* --- SCROLLBAR CUSTOM --- */
         ::-webkit-scrollbar { width: 8px; }
         ::-webkit-scrollbar-track { background: #1a1a1a; }
         ::-webkit-scrollbar-thumb { background: #333; border-radius: 4px; }
         ::-webkit-scrollbar-thumb:hover { background: #00ff88; }
 
-        /* --- OVERLAY VERIFICARE (FULL BLACKOUT - MODIFICAT AICI) --- */
+        /* --- OVERLAY VERIFICARE (FULL BLACKOUT - FIXED) --- */
         #verify-overlay {
-            position: fixed; /* FIXED acopera tot ecranul garantat */
-            top: 0; left: 0; width: 100vw; height: 100vh;
-            background-color: #000000; /* NEGRU COMPLET */
-            z-index: 99999; /* Peste orice altceva */
-            display: none; /* Ascuns default */
+            position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+            background-color: #000000; z-index: 99999; display: none;
             flex-direction: column; justify-content: center; align-items: center; text-align: center;
         }
-        
         .verify-box {
-            border: 1px solid #333;
-            padding: 40px;
-            border-radius: 20px;
-            background: #0a0a0a;
-            box-shadow: 0 0 50px rgba(0, 255, 136, 0.1);
-            max-width: 500px;
-            width: 90%;
+            border: 1px solid #333; padding: 40px; border-radius: 20px; background: #0a0a0a;
+            box-shadow: 0 0 50px rgba(0, 255, 136, 0.1); max-width: 500px; width: 90%;
         }
-
         .code-display {
             font-size: 32px; letter-spacing: 2px; color: #00ff88; font-weight: bold; font-family: monospace;
             margin: 25px 0; border: 2px dashed #00ff88; padding: 15px; border-radius: 10px;
-            background: rgba(0, 255, 136, 0.05);
-            user-select: all; /* Selecteaza tot cand dai click */
+            background: rgba(0, 255, 136, 0.05); user-select: all;
         }
 
         /* --- LOGIN STYLES --- */
@@ -116,34 +105,22 @@
 
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
-        /* --- PAGE 1: DASHBOARD STATS --- */
-        .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 25px; margin-bottom: 30px; }
+        /* --- STATS GRID (Mutat la Profil) --- */
+        .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; margin-bottom: 30px; }
         .card {
-            background-color: #1f1f1f; padding: 25px; border-radius: 12px; position: relative;
+            background-color: #1f1f1f; padding: 20px; border-radius: 12px; position: relative;
             border: 1px solid #2a2a2a; transition: transform 0.2s;
         }
         .card:hover { transform: translateY(-3px); border-color: #00ff88; }
-        .card i { font-size: 30px; margin-bottom: 15px; color: #00ff88; background: rgba(0,255,136,0.1); padding: 10px; border-radius: 10px; }
-        .card h3 { font-size: 13px; color: #888; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 5px; }
-        .card p { font-size: 26px; font-weight: 700; color: #fff; }
+        .card i { font-size: 24px; margin-bottom: 10px; color: #00ff88; background: rgba(0,255,136,0.1); padding: 8px; border-radius: 8px; }
+        .card h3 { font-size: 12px; color: #888; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 5px; }
+        .card p { font-size: 22px; font-weight: 700; color: #fff; }
 
-        /* --- PAGE 2: PROFILE DESIGN (NOU) --- */
-        .profile-layout { display: grid; grid-template-columns: 300px 1fr; gap: 30px; }
-        
-        /* Coloana Stanga - Backpack/Info */
-        .profile-sidebar .panel-card {
-            background: #1f1f1f; border-radius: 12px; padding: 20px; border: 1px solid #2a2a2a; margin-bottom: 20px;
-        }
-        .backpack-item {
-            display: flex; align-items: center; gap: 15px; padding: 10px; background: #181818; 
-            border-radius: 8px; margin-top: 10px; border: 1px solid #333;
-        }
-        .backpack-icon { color: #00ff88; font-size: 24px; }
-        
-        /* Coloana Dreapta - Main Details */
+        /* --- PROFILE --- */
+        .profile-layout { display: flex; flex-direction: column; gap: 30px; }
         .profile-header-card {
             background: #1f1f1f; border-radius: 12px; padding: 30px; border: 1px solid #2a2a2a;
-            display: flex; flex-direction: column; align-items: center; text-align: center; margin-bottom: 25px;
+            display: flex; flex-direction: column; align-items: center; text-align: center; margin-bottom: 20px;
         }
         .big-avatar { width: 100px; height: 100px; border-radius: 50%; border: 3px solid #00ff88; margin-bottom: 15px; }
         .profile-name { font-size: 24px; font-weight: bold; color: #fff; }
@@ -153,7 +130,6 @@
         .badges-container { display: flex; gap: 10px; justify-content: center; }
         .badge { padding: 5px 15px; border-radius: 20px; font-size: 12px; font-weight: bold; color: #fff; }
         .badge-vip { background: linear-gradient(45deg, #f1c40f, #f39c12); color: #000; }
-        .badge-premium { background: linear-gradient(45deg, #9b59b6, #8e44ad); }
 
         /* Tabs Navigation */
         .profile-tabs { display: flex; gap: 20px; margin-bottom: 20px; border-bottom: 1px solid #333; padding-bottom: 10px; }
@@ -169,6 +145,14 @@
         .data-row:last-child { border-bottom: none; }
         .data-label { color: #888; font-weight: 500; }
         .data-value { color: #fff; font-weight: 600; }
+
+        /* --- CAR TABLE (NOU) --- */
+        .vehicles-table { width: 100%; border-collapse: collapse; margin-top: 15px; }
+        .vehicles-table th { text-align: left; color: #888; padding: 10px; border-bottom: 1px solid #333; font-size: 12px; text-transform: uppercase; }
+        .vehicles-table td { padding: 15px 10px; border-bottom: 1px solid #2a2a2a; color: #fff; font-size: 14px; }
+        .vehicle-status-ok { color: #00ff88; } .vehicle-status-broken { color: #ff4d4d; }
+
+        .tab-content { display: none; } .tab-content.active-tab-content { display: block; }
 
         /* Warning Email */
         .email-warning {
@@ -223,6 +207,7 @@
     </div>
 
     <div id="dashboard-container">
+        
         <div class="sidebar">
             <div class="logo"><h2>SEVID<span>STUDIOS</span></h2></div>
             <ul>
@@ -240,11 +225,18 @@
         </div>
 
         <div class="main-content">
+            
+            <div id="email-alert" class="email-warning">
+                <div><i class="fas fa-exclamation-triangle"></i> Emailul <b><span id="alert-email-addr"></span></b> nu este confirmat!</div>
+                <button onclick="resendVerification()" style="background:none; border:none; color:#fff; text-decoration:underline; cursor:pointer;">Retrimite Email</button>
+            </div>
+
             <header>
                 <div class="welcome-text">
                     <h1 id="page-title">Dashboard</h1>
                     <p style="color:#666; font-size:14px;">Bine ai venit pe panel!</p>
                 </div>
+                
                 <div class="user-mini-profile">
                     <div class="search-box">
                         <i class="fas fa-search" style="color:#666"></i>
@@ -256,12 +248,6 @@
             </header>
 
             <div id="page-dashboard" class="page-section active-page">
-                <div class="stats-grid">
-                    <div class="card"><i class="fas fa-wallet"></i><h3>Bani Cash</h3><p id="dash-cash">$0</p></div>
-                    <div class="card"><i class="fas fa-university"></i><h3>Bani Bancă</h3><p id="dash-bank">$0</p></div>
-                    <div class="card"><i class="fas fa-briefcase"></i><h3>Job</h3><p id="dash-job">N/A</p></div>
-                    <div class="card"><i class="fas fa-clock"></i><h3>Ore Jucate</h3><p id="dash-hours">0</p></div>
-                </div>
                 <div class="profile-header-card" style="align-items: flex-start; text-align: left; padding: 20px;">
                     <h3 style="color:#fff; margin-bottom: 15px; border-bottom: 1px solid #333; width:100%; padding-bottom:10px;">Jurnal Activitate</h3>
                     <div style="width:100%; color:#888; font-size:14px;">
@@ -273,6 +259,7 @@
             </div>
 
             <div id="page-profile" class="page-section">
+                
                 <div class="profile-header-card">
                     <img src="" id="prof-big-avatar" class="big-avatar">
                     <div class="profile-name" id="prof-name">Jucator</div>
@@ -282,76 +269,67 @@
                     </div>
                 </div>
 
-                <div class="profile-layout">
-                    <div class="profile-sidebar">
-                        <div class="panel-card">
-                            <h4 style="color:#fff; margin-bottom:15px; border-bottom:1px solid #333; padding-bottom:10px;">Backpack</h4>
-                            <div class="backpack-item">
-                                <i class="fas fa-box backpack-icon"></i>
-                                <div>
-                                    <div style="color:#fff; font-weight:600;">High Quality Kit</div>
-                                    <div style="color:#666; font-size:12px;">Reparații Avansate</div>
-                                </div>
-                            </div>
-                            <div class="backpack-item">
-                                <i class="fas fa-mobile-alt backpack-icon" style="color:#3498db"></i>
-                                <div>
-                                    <div style="color:#fff; font-weight:600;">iPhone 14</div>
-                                    <div style="color:#666; font-size:12px;">Telefon Mobil</div>
-                                </div>
-                            </div>
-                            <div class="backpack-item" style="border: 1px solid #00ff88;">
-                                <i class="fas fa-car backpack-icon"></i>
-                                <div>
-                                    <div style="color:#fff; font-weight:600;">Mașini Personale</div>
-                                    <div style="color:#666; font-size:12px;" id="prof-cars">0 Vehicule</div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+                <div class="stats-grid">
+                    <div class="card"><i class="fas fa-wallet"></i><h3>Bani Cash</h3><p id="dash-cash">$0</p></div>
+                    <div class="card"><i class="fas fa-university"></i><h3>Bani Bancă</h3><p id="dash-bank">$0</p></div>
+                    <div class="card"><i class="fas fa-briefcase"></i><h3>Job</h3><p id="dash-job">N/A</p></div>
+                    <div class="card"><i class="fas fa-clock"></i><h3>Ore Jucate</h3><p id="dash-hours">0</p></div>
+                </div>
 
-                    <div class="profile-main">
+                <div class="panel-card" style="background:#1f1f1f; padding: 20px; border-radius:12px; border:1px solid #2a2a2a; margin-bottom: 20px;">
+                    <h4 style="color:#fff; margin-bottom:15px;"><i class="fas fa-cog"></i> Setări Conectare</h4>
+                    <div style="display: flex; gap: 10px; align-items: center;">
+                        <input type="text" id="input-schimba-nume" placeholder="Nume Roblox Exact" style="background: #111; border: 1px solid #444; color: #fff; padding: 10px; border-radius: 6px; flex: 1;">
+                        <button onclick="salveazaNumeNou()" style="background: #00ff88; color: #000; border: none; padding: 10px 20px; border-radius: 6px; cursor: pointer; font-weight: bold;">Salvează</button>
+                    </div>
+                </div>
+
+                <div class="profile-layout">
+                    <div class="profile-main" style="width: 100%;">
                         <div class="profile-tabs">
-                            <div class="tab-btn active-tab"><i class="fas fa-user"></i> Profile</div>
-                            <div class="tab-btn"><i class="fas fa-home"></i> Properties</div>
+                            <div class="tab-btn active-tab" onclick="switchProfileTab('general')"><i class="fas fa-user"></i> General</div>
+                            <div class="tab-btn" onclick="switchProfileTab('properties')"><i class="fas fa-home"></i> Properties</div>
                             <div class="tab-btn"><i class="fas fa-dumbbell"></i> Skills</div>
                             <div class="tab-btn"><i class="fas fa-history"></i> Faction History</div>
                         </div>
 
-                        <div class="panel-card" style="background:#1f1f1f; padding: 25px; border-radius:12px; border:1px solid #2a2a2a;">
-                            <div class="data-row">
-                                <span class="data-label">Faction</span>
-                                <span class="data-value" id="prof-faction" style="color:#3498db">Civilian</span>
-                            </div>
-                            <div class="data-row">
-                                <span class="data-label">Rank</span>
-                                <span class="data-value" id="prof-rank">0</span>
-                            </div>
-                            <div class="data-row">
-                                <span class="data-label">Level</span>
-                                <span class="data-value" id="prof-level">1</span>
-                            </div>
-                            <div class="data-row">
-                                <span class="data-label">Respect Points</span>
-                                <span class="data-value" id="prof-rp">0</span>
-                            </div>
-                            <div class="data-row">
-                                <span class="data-label">Playing Hours</span>
-                                <span class="data-value" id="prof-hours-2">0</span>
-                            </div>
-                            <div class="data-row">
-                                <span class="data-label">Phone</span>
-                                <span class="data-value" id="prof-phone">000-0000</span>
-                            </div>
-                            <div class="data-row">
-                                <span class="data-label">Job</span>
-                                <span class="data-value" id="prof-job-2" style="color:#f39c12">Somer</span>
-                            </div>
-                            <div class="data-row">
-                                <span class="data-label">Last Online</span>
-                                <span class="data-value" id="prof-seen">Necunoscut</span>
+                        <div id="tab-general" class="tab-content active-tab-content">
+                            <div class="panel-card" style="background:#1f1f1f; padding: 25px; border-radius:12px; border:1px solid #2a2a2a;">
+                                <div class="data-row"><span class="data-label">Faction</span><span class="data-value" id="prof-faction" style="color:#3498db">Civilian</span></div>
+                                <div class="data-row"><span class="data-label">Rank</span><span class="data-value" id="prof-rank">0</span></div>
+                                <div class="data-row"><span class="data-label">Level</span><span class="data-value" id="prof-level">1</span></div>
+                                <div class="data-row"><span class="data-label">Respect Points</span><span class="data-value" id="prof-rp">0</span></div>
+                                <div class="data-row"><span class="data-label">Phone</span><span class="data-value" id="prof-phone">000-0000</span></div>
+                                <div class="data-row"><span class="data-label">Last Online</span><span class="data-value" id="prof-seen">Necunoscut</span></div>
                             </div>
                         </div>
+
+                        <div id="tab-properties" class="tab-content">
+                            <div class="panel-card" style="background:#1f1f1f; padding: 25px; border-radius:12px; border:1px solid #2a2a2a; margin-bottom:20px;">
+                                <h4 style="color:#fff; margin-bottom:10px;"><i class="fas fa-home"></i> Locuință</h4>
+                                <div class="data-row"><span class="data-label">Casă Deținută (ID)</span><span class="data-value" id="prop-house">0</span></div>
+                                <div class="data-row"><span class="data-label">Sloturi Garaj</span><span class="data-value" id="prop-slots">2</span></div>
+                            </div>
+
+                            <div class="panel-card" style="background:#1f1f1f; padding: 25px; border-radius:12px; border:1px solid #2a2a2a;">
+                                <h4 style="color:#fff; margin-bottom:10px;"><i class="fas fa-car"></i> Vehicule Personale</h4>
+                                <table class="vehicles-table">
+                                    <thead>
+                                        <tr>
+                                            <th>Model</th>
+                                            <th>Nume</th>
+                                            <th>Culoare</th>
+                                            <th>KM</th>
+                                            <th>Status</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="garage-list">
+                                        <tr><td colspan="5" style="text-align:center; color:#666;">Se încarcă...</td></tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+
                     </div>
                 </div>
 
@@ -363,9 +341,8 @@
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.0.0/firebase-app.js";
         import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, onAuthStateChanged, signOut, sendEmailVerification } from "https://www.gstatic.com/firebasejs/10.0.0/firebase-auth.js";
-        import { getDatabase, ref, set, get, update, onValue } from "https://www.gstatic.com/firebasejs/10.0.0/firebase-database.js";
+        import { getDatabase, ref, set, get, child, update, onValue } from "https://www.gstatic.com/firebasejs/10.0.0/firebase-database.js";
 
-        // CONFIGURAREA TA (REPARAT API KEY cu F mare)
         const firebaseConfig = {
             apiKey: "AIzaSyDwD_aL4yioTc16MOCxz7cVec_eSKfABlo",
             authDomain: "projsmprobl.firebaseapp.com",
@@ -383,24 +360,30 @@
         
         let userStatsListener = null;
 
+        // --- TABS LOGIC ---
+        window.switchProfileTab = function(tabName) {
+            document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active-tab-content'));
+            document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active-tab'));
+            
+            document.getElementById('tab-' + tabName).classList.add('active-tab-content');
+            // Găsim butonul care a fost apăsat (simplificat)
+            const btns = document.querySelectorAll('.tab-btn');
+            if(tabName === 'general') btns[0].classList.add('active-tab');
+            if(tabName === 'properties') btns[1].classList.add('active-tab');
+        }
+
         // --- FUNCTIE DE REGENERARE COD (Daca e ----) ---
         window.activeazaVerificarea = async function() {
             if(!auth.currentUser) return;
-            
             const snapshot = await get(ref(db, 'site_users/' + auth.currentUser.uid));
             const siteData = snapshot.val();
-            
             if(siteData) {
                 const randomCode = Math.floor(1000 + Math.random() * 9000).toString();
-                
                 await update(ref(db, 'site_users/' + auth.currentUser.uid), { verified: false });
-                
                 await set(ref(db, 'verification_codes/' + randomCode), {
                     uid: auth.currentUser.uid,
                     robloxName: siteData.robloxUsername
                 });
-                
-                // Fortam afisarea imediata
                 document.getElementById('verification-code').innerText = "/link " + randomCode;
                 alert("Cod nou generat!");
             }
@@ -417,18 +400,15 @@
 
             try {
                 const uc = await createUserWithEmailAndPassword(auth, email, pass);
-                
                 await set(ref(db, 'site_users/' + uc.user.uid), { 
                     robloxUsername: robloxName, 
                     email: email,
                     verified: false 
                 });
-
                 await set(ref(db, 'verification_codes/' + randomCode), {
                     uid: uc.user.uid,
                     robloxName: robloxName
                 });
-
                 toggleForms();
             } catch(e) { alert("Eroare: " + e.message); }
         }
@@ -444,8 +424,8 @@
         window.toggleForms = () => {
             const login = document.getElementById('login-form');
             const reg = document.getElementById('register-form');
-            login.style.display = login.style.display === 'none' ? 'block' : 'none';
-            reg.style.display = reg.style.display === 'none' ? 'block' : 'none';
+            if(login.style.display === 'none') { login.style.display = 'block'; reg.style.display = 'none'; }
+            else { login.style.display = 'none'; reg.style.display = 'block'; }
         }
 
         window.switchPage = (pageId) => {
@@ -453,6 +433,16 @@
             document.querySelectorAll('.sidebar li').forEach(el => el.classList.remove('active'));
             document.getElementById('page-' + pageId).classList.add('active-page');
             document.getElementById('nav-' + pageId).classList.add('active');
+            document.getElementById('page-title').innerText = pageId === 'dashboard' ? 'Dashboard' : 'Profilul Meu';
+        }
+        
+        window.salveazaNumeNou = function() {
+            const numeNou = document.getElementById('input-schimba-nume').value;
+            if(!numeNou) return alert("Scrie un nume!");
+            if(auth.currentUser) {
+                update(ref(db, 'site_users/' + auth.currentUser.uid), { robloxUsername: numeNou })
+                .then(() => activeazaVerificarea()).catch((e) => alert("Eroare: " + e.message));
+            }
         }
 
         // --- MAIN LOGIC ---
@@ -477,6 +467,7 @@
                         // VERIFICAT
                         document.getElementById('verify-overlay').style.display = 'none';
                         document.getElementById('debug-msg').innerText = "Conectat ca: " + siteData.robloxUsername;
+                        document.getElementById('input-schimba-nume').value = siteData.robloxUsername;
                         ascultaDateJoc(siteData.robloxUsername);
                     }
                 });
@@ -501,9 +492,6 @@
             });
 
             if(!gasit) {
-                 // Daca e blocat pe ecranul negru dar nu are cod generat,
-                 // textul ramane '----' sau putem pune un mesaj.
-                 // Utilizatorul va apasa butonul "Genereaza Cod Nou" din HTML.
                  document.getElementById('verification-code').innerText = "COD EXPIRAT/LIPSĂ";
             }
         }
@@ -514,24 +502,60 @@
                 const data = snapshot.val();
                 if (data) {
                     document.getElementById('debug-msg').innerText = "✅ Sincronizat: " + numeRoblox;
+                    
+                    // Stats Header (Acum sunt la profil)
                     document.getElementById('dash-cash').innerText = "$" + (data.banii_cash || 0).toLocaleString();
                     document.getElementById('dash-bank').innerText = "$" + (data.banii_banca || 0).toLocaleString();
                     document.getElementById('dash-job').innerText = data.job_curent || "N/A";
                     document.getElementById('dash-hours').innerText = data.ore_jucate || 0;
+                    
+                    // Profile Info
                     if(data.avatar_url) {
                         document.getElementById('miniAvatar').src = data.avatar_url;
                         document.getElementById('prof-big-avatar').src = data.avatar_url;
                     }
                     document.getElementById('prof-name').innerText = numeRoblox;
+                    document.getElementById('prof-level').innerText = data.level || 1;
+                    document.getElementById('prof-rp').innerText = data.rp || 0;
                     document.getElementById('prof-faction').innerText = data.factiune || "Civil";
+                    document.getElementById('prof-rank').innerText = data.rank || 0;
                     document.getElementById('prof-phone').innerText = data.telefon || "N/A";
+                    document.getElementById('prof-seen').innerText = data.last_online || "N/A";
+
+                    // Properties Tab Data
+                    document.getElementById('prop-house').innerText = (data.casa_detinuta && data.casa_detinuta > 0) ? "ID " + data.casa_detinuta : "Fără Casă";
+                    document.getElementById('prop-slots').innerText = data.sloturi_garaj || 2;
+
+                    // Build Garage Table
+                    const garageList = document.getElementById('garage-list');
+                    garageList.innerHTML = ""; // Clear existing
+                    
+                    if (data.masini && Array.isArray(data.masini) && data.masini.length > 0) {
+                        data.masini.forEach(car => {
+                            const row = document.createElement('tr');
+                            const statusColor = (car.status === "Spawned" || car.status === "Stored") ? "vehicle-status-ok" : "vehicle-status-broken";
+                            row.innerHTML = `
+                                <td>${car.model}</td>
+                                <td>${car.nume}</td>
+                                <td>${car.culoare}</td>
+                                <td>${car.km} km</td>
+                                <td class="${statusColor}">${car.status}</td>
+                            `;
+                            garageList.appendChild(row);
+                        });
+                    } else {
+                        garageList.innerHTML = "<tr><td colspan='5' style='text-align:center; padding:20px; color:#555;'>Niciun vehicul în garaj.</td></tr>";
+                    }
+
+                } else {
+                    document.getElementById('debug-msg').innerText = "⚠️ Aștept date de la server...";
                 }
             });
         }
         
         window.cautaJucatorManual = function() {
             const nume = document.getElementById('searchInput').value;
-            if(nume) ascultaDateJoc(nume); // Simplificat pentru testare
+            if(nume) ascultaDateJoc(nume);
         }
     </script>
 </body>
