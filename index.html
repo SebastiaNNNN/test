@@ -52,7 +52,18 @@
 /* --- UPGRADE LOGIN MODERN (Glassmorphism) --- */
 /* Container Video */
 .video-background { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; pointer-events: none; overflow: hidden; }
-.video-background iframe { width: 100vw; height: 56.25vw; min-height: 100vh; min-width: 177.77vh; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); }
+.video-background iframe {
+    width: 100vw;
+    height: 56.25vw; /* Raport 16:9 */
+    min-height: 100vh;
+    min-width: 177.77vh; 
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    /* Mărim clipul cu 20% (scale 1.2) ca să ascundem marginile YouTube sub ecran */
+    transform: translate(-50%, -50%) scale(1.2); 
+    filter: brightness(0.8); /* Opțional: îl facem puțin mai întunecat pentru contrast mai bun */
+}
 .video-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: radial-gradient(circle, rgba(0,0,0,0.4) 0%, rgba(0,0,0,0.8) 100%); z-index: 0; }
 
 /* Center Login Panel */
@@ -233,8 +244,8 @@
 <body>
     <div class="video-background">
     <div class="video-overlay"></div>
-    <iframe src="https://www.youtube.com/embed/BiOPO-nKj7s?autoplay=1&mute=1&controls=0&loop=1&playlist=BiOPO-nKj7s&showinfo=0&rel=0&modestbranding=1&iv_load_policy=3&start=0" 
-            frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
+    <iframe src="https://www.youtube.com/embed/BiOPO-nKj7s?autoplay=1&mute=1&controls=0&loop=1&playlist=BiOPO-nKj7s&showinfo=0&rel=0&modestbranding=1&iv_load_policy=3&start=10&disablekb=1&fs=0" 
+        frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
 </div>
 
     <div id="loading-screen">
@@ -589,6 +600,7 @@
     </script>
 </body>
 </html>
+
 
 
 
