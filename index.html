@@ -8,17 +8,17 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
     <style>
-        /* --- CSS GENERAL (DESIGN-UL TĂU ORIGINAL) --- */
+        /* --- CSS GENERAL --- */
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
         body { display: flex; background-color: #121212; color: #e0e0e0; height: 100vh; overflow: hidden; }
 
-        /* --- SCROLLBAR CUSTOM --- */
+        /* --- SCROLLBAR --- */
         ::-webkit-scrollbar { width: 8px; }
         ::-webkit-scrollbar-track { background: #1a1a1a; }
         ::-webkit-scrollbar-thumb { background: #333; border-radius: 4px; }
         ::-webkit-scrollbar-thumb:hover { background: #00ff88; }
 
-        /* --- OVERLAY VERIFICARE (FULL BLACKOUT - FIXED) --- */
+        /* --- OVERLAY VERIFICARE (FULL BLACKOUT) --- */
         #verify-overlay {
             position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
             background-color: #000000; z-index: 99999; display: none;
@@ -99,13 +99,12 @@
         .user-mini-profile { display: flex; align-items: center; gap: 12px; }
         .user-mini-profile img { width: 45px; height: 45px; border-radius: 50%; border: 2px solid #333; }
 
-        /* --- PAGES (Switchable) --- */
+        /* --- PAGES --- */
         .page-section { display: none; animation: fadeIn 0.3s ease; }
         .page-section.active-page { display: block; }
-
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
-        /* --- STATS GRID (Mutat la Profil) --- */
+        /* --- STATS GRID (Profil) --- */
         .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; margin-bottom: 30px; }
         .card {
             background-color: #1f1f1f; padding: 20px; border-radius: 12px; position: relative;
@@ -116,7 +115,7 @@
         .card h3 { font-size: 12px; color: #888; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 5px; }
         .card p { font-size: 22px; font-weight: 700; color: #fff; }
 
-        /* --- PROFILE --- */
+        /* --- PROFILE LAYOUT --- */
         .profile-layout { display: flex; flex-direction: column; gap: 30px; }
         .profile-header-card {
             background: #1f1f1f; border-radius: 12px; padding: 30px; border: 1px solid #2a2a2a;
@@ -131,13 +130,13 @@
         .badge { padding: 5px 15px; border-radius: 20px; font-size: 12px; font-weight: bold; color: #fff; }
         .badge-vip { background: linear-gradient(45deg, #f1c40f, #f39c12); color: #000; }
 
-        /* Tabs Navigation */
+        /* --- TABS --- */
         .profile-tabs { display: flex; gap: 20px; margin-bottom: 20px; border-bottom: 1px solid #333; padding-bottom: 10px; }
         .tab-btn { color: #888; cursor: pointer; padding: 10px; font-weight: 500; transition: 0.3s; display: flex; align-items: center; gap: 8px; }
         .tab-btn:hover { color: #fff; }
         .tab-btn.active-tab { color: #00ff88; border-bottom: 2px solid #00ff88; }
 
-        /* Data Rows */
+        /* --- DATA ROWS --- */
         .data-row {
             display: flex; justify-content: space-between; padding: 15px 0; border-bottom: 1px solid #2a2a2a;
             font-size: 14px;
@@ -146,7 +145,7 @@
         .data-label { color: #888; font-weight: 500; }
         .data-value { color: #fff; font-weight: 600; }
 
-        /* --- CAR TABLE (NOU) --- */
+        /* --- CAR TABLE --- */
         .vehicles-table { width: 100%; border-collapse: collapse; margin-top: 15px; }
         .vehicles-table th { text-align: left; color: #888; padding: 10px; border-bottom: 1px solid #333; font-size: 12px; text-transform: uppercase; }
         .vehicles-table td { padding: 15px 10px; border-bottom: 1px solid #2a2a2a; color: #fff; font-size: 14px; }
@@ -154,13 +153,7 @@
 
         .tab-content { display: none; } .tab-content.active-tab-content { display: block; }
 
-        /* Warning Email */
-        .email-warning {
-            background: rgba(255, 77, 77, 0.1); border: 1px solid #ff4d4d; color: #ff4d4d;
-            padding: 12px 20px; border-radius: 8px; margin-bottom: 30px; display: none; align-items: center; justify-content: space-between;
-        }
-
-        /* Responsive */
+        /* --- RESPONSIVE --- */
         @media (max-width: 900px) { .profile-layout { grid-template-columns: 1fr; } }
     </style>
 </head>
@@ -172,15 +165,9 @@
             <p style="color:#ccc; font-size: 16px; margin-bottom: 20px;">
                 Trebuie să confirmi că ești proprietarul contului <b><span id="verify-name" style="color: #00ff88;"></span></b>.
             </p>
-            
             <p style="color:#888; margin-bottom: 5px;">Intră pe server și scrie în chat:</p>
-            
             <div class="code-display" id="verification-code">Generare cod...</div>
-            
-            <p style="color:#666; font-size: 12px; margin-top: 20px;">
-                (Dacă scrii corect, acest ecran dispare singur în câteva secunde)
-            </p>
-
+            <p style="color:#666; font-size: 12px; margin-top: 20px;">(Dacă scrii corect, acest ecran dispare singur)</p>
             <div style="margin-top: 30px; display: flex; gap: 10px; justify-content: center;">
                 <button onclick="activeazaVerificarea()" style="background: #333; color: white; border: none; padding: 10px 15px; cursor: pointer; border-radius: 5px;">🔄 Generează Cod Nou</button>
                 <button onclick="logoutUser()" style="background: transparent; border: 1px solid #444; color: #aaa; padding: 10px 15px; cursor: pointer; border-radius: 5px;">Ieșire</button>
@@ -207,7 +194,6 @@
     </div>
 
     <div id="dashboard-container">
-        
         <div class="sidebar">
             <div class="logo"><h2>SEVID<span>STUDIOS</span></h2></div>
             <ul>
@@ -225,18 +211,11 @@
         </div>
 
         <div class="main-content">
-            
-            <div id="email-alert" class="email-warning">
-                <div><i class="fas fa-exclamation-triangle"></i> Emailul <b><span id="alert-email-addr"></span></b> nu este confirmat!</div>
-                <button onclick="resendVerification()" style="background:none; border:none; color:#fff; text-decoration:underline; cursor:pointer;">Retrimite Email</button>
-            </div>
-
             <header>
                 <div class="welcome-text">
                     <h1 id="page-title">Dashboard</h1>
                     <p style="color:#666; font-size:14px;">Bine ai venit pe panel!</p>
                 </div>
-                
                 <div class="user-mini-profile">
                     <div class="search-box">
                         <i class="fas fa-search" style="color:#666"></i>
@@ -276,16 +255,9 @@
                     <div class="card"><i class="fas fa-clock"></i><h3>Ore Jucate</h3><p id="dash-hours">0</p></div>
                 </div>
 
-                <div class="panel-card" style="background:#1f1f1f; padding: 20px; border-radius:12px; border:1px solid #2a2a2a; margin-bottom: 20px;">
-                    <h4 style="color:#fff; margin-bottom:15px;"><i class="fas fa-cog"></i> Setări Conectare</h4>
-                    <div style="display: flex; gap: 10px; align-items: center;">
-                        <input type="text" id="input-schimba-nume" placeholder="Nume Roblox Exact" style="background: #111; border: 1px solid #444; color: #fff; padding: 10px; border-radius: 6px; flex: 1;">
-                        <button onclick="salveazaNumeNou()" style="background: #00ff88; color: #000; border: none; padding: 10px 20px; border-radius: 6px; cursor: pointer; font-weight: bold;">Salvează</button>
-                    </div>
-                </div>
-
                 <div class="profile-layout">
                     <div class="profile-main" style="width: 100%;">
+                        
                         <div class="profile-tabs">
                             <div class="tab-btn active-tab" onclick="switchProfileTab('general')"><i class="fas fa-user"></i> General</div>
                             <div class="tab-btn" onclick="switchProfileTab('properties')"><i class="fas fa-home"></i> Properties</div>
@@ -332,9 +304,7 @@
 
                     </div>
                 </div>
-
             </div>
-
         </div>
     </div>
 
@@ -366,13 +336,12 @@
             document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active-tab'));
             
             document.getElementById('tab-' + tabName).classList.add('active-tab-content');
-            // Găsim butonul care a fost apăsat (simplificat)
             const btns = document.querySelectorAll('.tab-btn');
             if(tabName === 'general') btns[0].classList.add('active-tab');
             if(tabName === 'properties') btns[1].classList.add('active-tab');
         }
 
-        // --- FUNCTIE DE REGENERARE COD (Daca e ----) ---
+        // --- FUNCTIE DE REGENERARE COD ---
         window.activeazaVerificarea = async function() {
             if(!auth.currentUser) return;
             const snapshot = await get(ref(db, 'site_users/' + auth.currentUser.uid));
@@ -400,15 +369,8 @@
 
             try {
                 const uc = await createUserWithEmailAndPassword(auth, email, pass);
-                await set(ref(db, 'site_users/' + uc.user.uid), { 
-                    robloxUsername: robloxName, 
-                    email: email,
-                    verified: false 
-                });
-                await set(ref(db, 'verification_codes/' + randomCode), {
-                    uid: uc.user.uid,
-                    robloxName: robloxName
-                });
+                await set(ref(db, 'site_users/' + uc.user.uid), { robloxUsername: robloxName, email: email, verified: false });
+                await set(ref(db, 'verification_codes/' + randomCode), { uid: uc.user.uid, robloxName: robloxName });
                 toggleForms();
             } catch(e) { alert("Eroare: " + e.message); }
         }
@@ -435,15 +397,6 @@
             document.getElementById('nav-' + pageId).classList.add('active');
             document.getElementById('page-title').innerText = pageId === 'dashboard' ? 'Dashboard' : 'Profilul Meu';
         }
-        
-        window.salveazaNumeNou = function() {
-            const numeNou = document.getElementById('input-schimba-nume').value;
-            if(!numeNou) return alert("Scrie un nume!");
-            if(auth.currentUser) {
-                update(ref(db, 'site_users/' + auth.currentUser.uid), { robloxUsername: numeNou })
-                .then(() => activeazaVerificarea()).catch((e) => alert("Eroare: " + e.message));
-            }
-        }
 
         // --- MAIN LOGIC ---
         onAuthStateChanged(auth, (user) => {
@@ -456,18 +409,13 @@
                     const siteData = snapshot.val();
                     if(!siteData) return;
 
-                    // Daca e NEVERIFICAT
                     if (siteData.verified === false || siteData.verified === undefined) {
-                        document.getElementById('verify-overlay').style.display = 'flex'; // ARATA NEGRU
+                        document.getElementById('verify-overlay').style.display = 'flex';
                         document.getElementById('verify-name').innerText = siteData.robloxUsername;
-                        
-                        // Cautam codul
                         gasesteCodulUserului(user.uid);
                     } else {
-                        // VERIFICAT
                         document.getElementById('verify-overlay').style.display = 'none';
                         document.getElementById('debug-msg').innerText = "Conectat ca: " + siteData.robloxUsername;
-                        document.getElementById('input-schimba-nume').value = siteData.robloxUsername;
                         ascultaDateJoc(siteData.robloxUsername);
                     }
                 });
@@ -479,21 +427,16 @@
             }
         });
 
-        // Cauta codul. Daca nu il gaseste (din cauza erorilor vechi), afiseaza buton de generare.
         async function gasesteCodulUserului(uid) {
             const snap = await get(ref(db, 'verification_codes'));
             let gasit = false;
-            
             snap.forEach(child => {
                 if(child.val().uid === uid) {
                     document.getElementById('verification-code').innerText = "/link " + child.key;
                     gasit = true;
                 }
             });
-
-            if(!gasit) {
-                 document.getElementById('verification-code').innerText = "COD EXPIRAT/LIPSĂ";
-            }
+            if(!gasit) document.getElementById('verification-code').innerText = "COD LIPSĂ. APASĂ 'Generează Cod Nou'";
         }
 
         function ascultaDateJoc(numeRoblox) {
@@ -503,7 +446,7 @@
                 if (data) {
                     document.getElementById('debug-msg').innerText = "✅ Sincronizat: " + numeRoblox;
                     
-                    // Stats Header (Acum sunt la profil)
+                    // Stats
                     document.getElementById('dash-cash').innerText = "$" + (data.banii_cash || 0).toLocaleString();
                     document.getElementById('dash-bank').innerText = "$" + (data.banii_banca || 0).toLocaleString();
                     document.getElementById('dash-job').innerText = data.job_curent || "N/A";
@@ -522,33 +465,24 @@
                     document.getElementById('prof-phone').innerText = data.telefon || "N/A";
                     document.getElementById('prof-seen').innerText = data.last_online || "N/A";
 
-                    // Properties Tab Data
+                    // Properties Data
                     document.getElementById('prop-house').innerText = (data.casa_detinuta && data.casa_detinuta > 0) ? "ID " + data.casa_detinuta : "Fără Casă";
                     document.getElementById('prop-slots').innerText = data.sloturi_garaj || 2;
 
-                    // Build Garage Table
+                    // Table
                     const garageList = document.getElementById('garage-list');
-                    garageList.innerHTML = ""; // Clear existing
+                    garageList.innerHTML = ""; 
                     
                     if (data.masini && Array.isArray(data.masini) && data.masini.length > 0) {
                         data.masini.forEach(car => {
                             const row = document.createElement('tr');
                             const statusColor = (car.status === "Spawned" || car.status === "Stored") ? "vehicle-status-ok" : "vehicle-status-broken";
-                            row.innerHTML = `
-                                <td>${car.model}</td>
-                                <td>${car.nume}</td>
-                                <td>${car.culoare}</td>
-                                <td>${car.km} km</td>
-                                <td class="${statusColor}">${car.status}</td>
-                            `;
+                            row.innerHTML = `<td>${car.model}</td><td>${car.nume}</td><td>${car.culoare}</td><td>${car.km} km</td><td class="${statusColor}">${car.status}</td>`;
                             garageList.appendChild(row);
                         });
                     } else {
                         garageList.innerHTML = "<tr><td colspan='5' style='text-align:center; padding:20px; color:#555;'>Niciun vehicul în garaj.</td></tr>";
                     }
-
-                } else {
-                    document.getElementById('debug-msg').innerText = "⚠️ Aștept date de la server...";
                 }
             });
         }
