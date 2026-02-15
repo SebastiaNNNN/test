@@ -50,85 +50,78 @@
         /* --- LOGIN STYLES --- */
         /* Nota: Default display none ca sa nu apara flicker */
 /* --- UPGRADE LOGIN MODERN (Glassmorphism) --- */
+/* Container Video */
+.video-background { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; pointer-events: none; overflow: hidden; }
+.video-background iframe { width: 100vw; height: 56.25vw; min-height: 100vh; min-width: 177.77vh; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); }
+.video-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: radial-gradient(circle, rgba(0,0,0,0.4) 0%, rgba(0,0,0,0.8) 100%); z-index: 0; }
+
+/* Center Login Panel */
 #auth-container {
     background: transparent !important;
-    z-index: 100;
-}
-/* Containerul pentru Video de fundal */
-.video-background {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    z-index: -1;
-    pointer-events: none;
-    overflow: hidden;
-}
-
-.video-background iframe {
-    width: 100vw;
-    height: 56.25vw; /* Raport 16:9 */
-    min-height: 100vh;
-    min-width: 177.77vh; /* Raport 16:9 */
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-}
-
-/* Overlay pentru a întuneca clipul și a scoate în evidență formularul */
-.video-overlay {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: rgba(0, 0, 0, 0.6); /* Ajustează opacitatea aici */
-    z-index: 0;
-}
-/* Adăugăm un strat de întunecare peste fundal */
-#auth-container::before {
-    content: ""; position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-    background: rgba(0, 0, 0, 0.7); backdrop-filter: blur(5px); /* Blur pe fundal */
+    display: none; /* Se activeaza din JS */
+    justify-content: center;
+    align-items: center;
 }
 
 .auth-box {
-    background: rgba(255, 255, 255, 0.05) !important;
-    backdrop-filter: blur(15px) saturate(150%);
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    box-shadow: 0 0 40px rgba(0, 0, 0, 0.8);
+    position: relative;
+    background: rgba(10, 10, 10, 0.85) !important; /* Aproape negru, foarte pro */
+    backdrop-filter: blur(25px) saturate(180%);
+    padding: 60px 45px;
+    border-radius: 30px;
+    border: 1px solid rgba(0, 255, 136, 0.2); /* Margine verde foarte fina */
+    width: 420px;
+    box-shadow: 0 40px 100px rgba(0, 0, 0, 0.9);
+    transition: 0.5s ease;
 }
 
-.auth-box h2 { 
-    font-size: 28px; font-weight: 800; color: #fff; margin-bottom: 30px; 
-    letter-spacing: -1px; text-transform: uppercase;
+.auth-box:hover {
+    border-color: rgba(0, 255, 136, 0.6);
+    box-shadow: 0 0 30px rgba(0, 255, 136, 0.1);
+}
+
+.auth-box h2 {
+    font-size: 32px;
+    font-weight: 900;
+    text-transform: uppercase;
+    letter-spacing: 5px;
+    background: linear-gradient(to right, #fff, #00ff88);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    margin-bottom: 35px;
 }
 
 .auth-box input {
-    width: 100%; padding: 15px; margin: 12px 0; 
-    background: rgba(0, 0, 0, 0.5); 
-    border: 1px solid rgba(255, 255, 255, 0.1); 
-    color: #fff; border-radius: 12px; outline: none; transition: 0.4s;
-    font-size: 15px;
+    background: rgba(255, 255, 255, 0.03) !important;
+    border: 1px solid rgba(255, 255, 255, 0.1) !important;
+    padding: 18px !important;
+    border-radius: 15px !important;
+    margin-bottom: 20px !important;
+    font-size: 16px !important;
+    transition: 0.3s;
 }
 
-.auth-box input:focus { 
-    border-color: #00ff88; background: rgba(0, 0, 0, 0.8);
-    box-shadow: 0 0 15px rgba(0, 255, 136, 0.2);
+.auth-box input:focus {
+    background: rgba(0, 255, 136, 0.05) !important;
+    border-color: #00ff88 !important;
+    box-shadow: 0 0 20px rgba(0, 255, 136, 0.1);
 }
 
 .btn-auth {
-    width: 100%; padding: 16px; 
-    background: linear-gradient(45deg, #00ff88, #00cc6a); 
-    border: none; color: #000; font-weight: 800; 
-    cursor: pointer; border-radius: 12px; margin-top: 20px; 
-    transition: 0.4s; text-transform: uppercase; letter-spacing: 1px;
+    background: #00ff88 !important;
+    color: #000 !important;
+    padding: 20px !important;
+    border-radius: 15px !important;
+    font-size: 16px !important;
+    font-weight: 900 !important;
+    letter-spacing: 2px !important;
+    margin-top: 25px !important;
+    transition: 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) !important;
 }
 
-.btn-auth:hover { 
-    transform: translateY(-3px);
-    box-shadow: 0 10px 20px rgba(0, 255, 136, 0.4);
+.btn-auth:hover {
+    transform: scale(1.05) !important;
+    box-shadow: 0 15px 30px rgba(0, 255, 136, 0.4) !important;
 }
         .switch-auth { margin-top: 15px; font-size: 12px; cursor: pointer; color: #aaa; text-decoration: underline; }
 
@@ -596,5 +589,6 @@
     </script>
 </body>
 </html>
+
 
 
