@@ -3,85 +3,390 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>RPG Panel - User Dashboard</title>
-    <link rel="stylesheet" href="style.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <title>RPG Panel - B-Hood Style</title>
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <style>
+        /* Resetare generală */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            display: flex;
+            background-color: #121212; /* Dark Mode */
+            color: #e0e0e0;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        /* --- SIDEBAR (Meniul Stânga) --- */
+        .sidebar {
+            width: 260px;
+            background-color: #1a1a1a;
+            display: flex;
+            flex-direction: column;
+            padding: 25px;
+            border-right: 1px solid #333;
+            box-shadow: 4px 0 15px rgba(0,0,0,0.5);
+            z-index: 10;
+        }
+
+        .logo {
+            margin-bottom: 40px;
+            text-align: center;
+            padding-bottom: 20px;
+            border-bottom: 1px solid #333;
+        }
+
+        .logo h2 {
+            color: #fff;
+            font-weight: 800;
+            letter-spacing: 1px;
+        }
+
+        .logo span {
+            color: #00ff88; /* Verde Neon */
+        }
+
+        .sidebar ul {
+            list-style: none;
+        }
+
+        .sidebar ul li {
+            margin-bottom: 10px;
+        }
+
+        .sidebar ul li a {
+            text-decoration: none;
+            color: #aaa;
+            font-size: 16px;
+            display: flex;
+            align-items: center;
+            padding: 12px 15px;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+        }
+
+        .sidebar ul li a i {
+            margin-right: 15px;
+            width: 20px;
+            text-align: center;
+        }
+
+        .sidebar ul li a:hover, .sidebar ul li.active a {
+            background-color: #00ff88;
+            color: #000;
+            font-weight: bold;
+            transform: translateX(5px);
+        }
+
+        .logout {
+            margin-top: auto;
+        }
+
+        .logout a {
+            color: #ff4d4d !important;
+        }
+
+        /* --- CONTENT (Partea Dreaptă) --- */
+        .main-content {
+            flex: 1;
+            padding: 40px;
+            overflow-y: auto;
+            background: radial-gradient(circle at top right, #1e1e1e, #121212);
+        }
+
+        /* Header */
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 50px;
+        }
+
+        .search-box {
+            background: #252525;
+            padding: 10px 20px;
+            border-radius: 50px;
+            display: flex;
+            align-items: center;
+            border: 1px solid #333;
+        }
+
+        .search-box input {
+            background: transparent;
+            border: none;
+            color: #fff;
+            margin-left: 10px;
+            outline: none;
+        }
+
+        .user-profile {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .user-profile img {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            border: 2px solid #00ff88;
+        }
+
+        .user-text h4 {
+            color: #fff;
+        }
+        
+        .user-text p {
+            font-size: 12px;
+            color: #888;
+        }
+
+        /* Carduri Statistici */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 25px;
+            margin-bottom: 40px;
+        }
+
+        .card {
+            background-color: #1a1a1a;
+            padding: 25px;
+            border-radius: 15px;
+            position: relative;
+            overflow: hidden;
+            border: 1px solid #333;
+            transition: transform 0.3s;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            border-color: #00ff88;
+        }
+
+        .card i {
+            font-size: 35px;
+            margin-bottom: 15px;
+            color: #00ff88;
+        }
+
+        .card h3 {
+            font-size: 14px;
+            color: #888;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .card p {
+            font-size: 24px;
+            font-weight: bold;
+            color: #fff;
+            margin-top: 5px;
+        }
+
+        /* Tabel Logs */
+        .logs-section h3 {
+            margin-bottom: 20px;
+            border-left: 4px solid #00ff88;
+            padding-left: 15px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background-color: #1a1a1a;
+            border-radius: 12px;
+            overflow: hidden;
+        }
+
+        table th, table td {
+            padding: 18px;
+            text-align: left;
+            border-bottom: 1px solid #2a2a2a;
+        }
+
+        table th {
+            background-color: #252525;
+            color: #00ff88;
+            font-weight: 600;
+        }
+
+        table tr:hover {
+            background-color: #222;
+        }
+    </style>
 </head>
 <body>
 
     <div class="sidebar">
         <div class="logo">
-            <h2>💎 ROBLOX RPG</h2>
+            <h2>ROBLOX<span>RPG</span></h2>
         </div>
         <ul>
-            <li class="active"><a href="#"><i class="fas fa-home"></i> Acasă</a></li>
-            <li><a href="#"><i class="fas fa-user"></i> Profilul Meu</a></li>
+            <li class="active"><a href="#"><i class="fas fa-chart-line"></i> Dashboard</a></li>
+            <li><a href="#"><i class="fas fa-user-circle"></i> Profilul Meu</a></li>
             <li><a href="#"><i class="fas fa-users"></i> Facțiuni</a></li>
-            <li><a href="#"><i class="fas fa-gavel"></i> Reclamații</a></li>
-            <li><a href="#"><i class="fas fa-shopping-cart"></i> Shop</a></li>
+            <li><a href="#"><i class="fas fa-file-contract"></i> Reclamații</a></li>
+            <li><a href="#"><i class="fas fa-store"></i> Shop Premium</a></li>
         </ul>
         <div class="logout">
-            <a href="#"><i class="fas fa-sign-out-alt"></i> Deconectare</a>
+            <a href="#"><i class="fas fa-sign-out-alt"></i> Ieșire</a>
         </div>
     </div>
 
     <div class="main-content">
         <header>
-            <h1>Salut, <span id="username">Jucator</span>!</h1>
-            <div class="user-info">
-                <span>Level: 15</span>
-                <img src="https://tr.rbxcdn.com/30DAY-Avatar-Headshot-Img" alt="Avatar">
+            <div class="welcome-text">
+                <h1>Panou Utilizator</h1>
+                <p>Vezi statisticile tale în timp real</p>
+            </div>
+            
+            <div class="search-box">
+                <i class="fas fa-search"></i>
+                <input type="text" id="searchInput" placeholder="Caută jucător (Ex: Stefan)...">
+                <button onclick="cautaJucator()" style="background: #00ff88; border: none; padding: 5px 15px; border-radius: 20px; cursor: pointer; font-weight: bold; margin-left: 10px;">Caută</button>
+            </div>
+
+            <div class="user-profile">
+                <div class="user-text">
+                    <h4 id="headerUsername">Vizitator</h4>
+                    <p>Status: Online</p>
+                </div>
+                <img src="https://tr.rbxcdn.com/535451733604f3780376d54833215904/150/150/AvatarHeadshot/Png" alt="Avatar" id="headerAvatar">
             </div>
         </header>
 
         <div class="stats-grid">
-            <div class="card cash">
+            <div class="card">
                 <i class="fas fa-wallet"></i>
                 <h3>Bani Cash</h3>
-                <p id="cash">$1,500,000</p>
+                <p id="displayCash">$0</p>
             </div>
-            <div class="card bank">
+            <div class="card">
                 <i class="fas fa-university"></i>
                 <h3>Bani Bancă</h3>
-                <p id="bank">$50,000,000</p>
+                <p id="displayBank">$0</p>
             </div>
-            <div class="card faction">
-                <i class="fas fa-shield-alt"></i>
-                <h3>Facțiune</h3>
-                <p>Police Department (Rank 5)</p>
+            <div class="card">
+                <i class="fas fa-briefcase"></i>
+                <h3>Job Curent</h3>
+                <p id="displayJob">Șomer</p>
             </div>
-            <div class="card premium">
-                <i class="fas fa-gem"></i>
-                <h3>Premium Points</h3>
-                <p>500 PP</p>
+            <div class="card">
+                <i class="fas fa-clock"></i>
+                <h3>Ore Jucate</h3>
+                <p id="displayHours">0</p>
             </div>
         </div>
 
         <div class="logs-section">
-            <h3>Ultimile Activități</h3>
+            <h3>Jurnal Activitate Recentă</h3>
             <table>
                 <thead>
                     <tr>
-                        <th>Acțiune</th>
-                        <th>Detalii</th>
-                        <th>Dată</th>
+                        <th>Tip Acțiune</th>
+                        <th>Descriere</th>
+                        <th>Data & Ora</th>
                     </tr>
                 </thead>
-                <tbody>
+                <tbody id="logsTable">
                     <tr>
-                        <td>Login</td>
-                        <td>Te-ai conectat pe server.</td>
-                        <td>Azi, 14:00</td>
-                    </tr>
-                    <tr>
-                        <td>Transfer</td>
-                        <td>Ai primit $50k de la X.</td>
-                        <td>Azi, 12:30</td>
+                        <td>System</td>
+                        <td>Așteptare conectare jucător...</td>
+                        <td>Acum</td>
                     </tr>
                 </tbody>
             </table>
         </div>
     </div>
 
+    <script>
+        // ---------------------------------------------------------
+        // ⚠️ CONFIGURARE: PUNE LINK-UL TĂU FIREBASE MAI JOS ⚠️
+        // ---------------------------------------------------------
+        const CONSTANTA_URL_FIREBASE = "https://projsmprobl-default-rtdb.europe-west1.firebasedatabase.app/"; 
+        // Nu uita sa lasi slash-ul '/' la final!
+        // ---------------------------------------------------------
+
+        // Această funcție este apelată când apeși butonul "Caută"
+        async function cautaJucator() {
+            const numeInput = document.getElementById('searchInput').value;
+            
+            if (!numeInput) {
+                alert("Te rog scrie un nume!");
+                return;
+            }
+
+            // Arătăm că se încarcă
+            document.getElementById('headerUsername').innerText = "Se caută...";
+
+            try {
+                // Facem request către baza de date Firebase
+                const response = await fetch(`${CONSTANTA_URL_FIREBASE}users/${numeInput}.json`);
+                
+                // Verificăm dacă request-ul a reușit tehnic
+                if (!response.ok) {
+                    throw new Error("Eroare la conexiunea cu baza de date.");
+                }
+
+                const data = await response.json();
+
+                // Verificăm dacă am primit date (dacă jucătorul există)
+                if (data) {
+                    // Actualizăm interfața cu datele primite
+                    console.log("Date primite:", data);
+
+                    // 1. Nume și Avatar
+                    document.getElementById('headerUsername').innerText = numeInput;
+                    if(data.avatar_url) {
+                        document.getElementById('headerAvatar').src = data.avatar_url;
+                    }
+
+                    // 2. Statistici
+                    document.getElementById('displayCash').innerText = "$" + (data.banii_cash || 0).toLocaleString();
+                    document.getElementById('displayBank').innerText = "$" + (data.banii_banca || 0).toLocaleString();
+                    document.getElementById('displayJob').innerText = data.job_curent || "Șomer";
+                    document.getElementById('displayHours').innerText = data.ore_jucate || 0;
+
+                    // 3. Actualizăm tabelul de logs (simulat)
+                    const logsHTML = `
+                        <tr>
+                            <td><span style="color:#00ff88">Login</span></td>
+                            <td>Datele au fost sincronizate cu succes.</td>
+                            <td>Acum</td>
+                        </tr>
+                        <tr>
+                            <td>Server</td>
+                            <td>Ultima salvare din Roblox.</td>
+                            <td>Recent</td>
+                        </tr>
+                    `;
+                    document.getElementById('logsTable').innerHTML = logsHTML;
+
+                } else {
+                    alert("Jucătorul nu a fost găsit! Asigură-te că a intrat pe server și s-au salvat datele.");
+                    document.getElementById('headerUsername').innerText = "Necunoscut";
+                }
+
+            } catch (error) {
+                console.error(error);
+                alert("Eroare! Verifică dacă ai pus link-ul corect de Firebase în cod.");
+            }
+        }
+
+        // Permite apăsarea tastei ENTER în căsuța de căutare
+        document.getElementById("searchInput").addEventListener("keypress", function(event) {
+            if (event.key === "Enter") {
+                cautaJucator();
+            }
+        });
+    </script>
 </body>
 </html>
