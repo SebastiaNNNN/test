@@ -1,5 +1,6 @@
 {
   "rewrites": [
+    { "source": "/api/command", "destination": "/api/command.py" },
     { "source": "/(.*)", "destination": "/index.html" }
   ]
 }
