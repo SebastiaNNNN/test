@@ -1,6 +1,11 @@
 {
   "rewrites": [
     { "source": "/api/command", "destination": "/api/command.py" },
+    { "source": "/api/player", "destination": "/api/player.py" },
+    { "source": "/api/players", "destination": "/api/players.py" },
+    { "source": "/api/factions", "destination": "/api/factions.py" },
+    { "source": "/panel", "destination": "/panel.html" },
+    { "source": "/panel-login", "destination": "/panel-login.html" },
     { "source": "/(.*)", "destination": "/index.html" }
   ]
 }

@@ -1,0 +1,158 @@
+﻿<!doctype html>
+<html lang="ro">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>SEVID RP - Login Panel</title>
+  <style>
+    :root {
+      --bg: #0c1018;
+      --card: #151b27;
+      --line: #2a3347;
+      --text: #e8edf7;
+      --muted: #98a4bd;
+      --accent: #2dd4bf;
+      --accent-2: #0ea5e9;
+      --danger: #ff6b6b;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+      background: radial-gradient(circle at 20% 20%, #1a2233 0%, var(--bg) 55%);
+      color: var(--text);
+      min-height: 100vh;
+      display: grid;
+      place-items: center;
+      padding: 20px;
+    }
+
+    .card {
+      width: 100%;
+      max-width: 430px;
+      background: linear-gradient(180deg, rgba(255,255,255,0.03), rgba(255,255,255,0));
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      padding: 28px;
+      box-shadow: 0 18px 48px rgba(0, 0, 0, 0.36);
+    }
+
+    h1 {
+      margin: 0;
+      font-size: 28px;
+      letter-spacing: 0.3px;
+    }
+
+    .subtitle {
+      margin: 6px 0 20px;
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 8px;
+      font-size: 12px;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+    }
+
+    input {
+      width: 100%;
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      background: #0f1420;
+      color: var(--text);
+      padding: 12px 13px;
+      font-size: 14px;
+      margin-bottom: 16px;
+      outline: none;
+    }
+
+    input:focus {
+      border-color: var(--accent-2);
+      box-shadow: 0 0 0 3px rgba(14, 165, 233, 0.16);
+    }
+
+    button {
+      width: 100%;
+      border: 0;
+      border-radius: 10px;
+      padding: 12px 14px;
+      font-size: 14px;
+      font-weight: 700;
+      color: #041018;
+      background: linear-gradient(135deg, var(--accent), var(--accent-2));
+      cursor: pointer;
+    }
+
+    .error {
+      display: none;
+      margin-bottom: 14px;
+      background: rgba(255, 107, 107, 0.12);
+      border: 1px solid rgba(255, 107, 107, 0.36);
+      color: var(--danger);
+      border-radius: 10px;
+      padding: 10px 12px;
+      font-size: 13px;
+    }
+  </style>
+</head>
+<body>
+  <section class="card">
+    <h1>SEVID RP</h1>
+    <p class="subtitle">Admin Panel login</p>
+
+    <div id="error" class="error"></div>
+
+    <label for="admin-name">Admin Name</label>
+    <input id="admin-name" type="text" placeholder="Ex: sbyk" autocomplete="off" />
+
+    <label for="admin-key">Admin Key</label>
+    <input id="admin-key" type="password" placeholder="ADMIN_KEY din Vercel" autocomplete="off" />
+
+    <button id="login-btn" type="button">Intra in Panel</button>
+  </section>
+
+  <script>
+    const errorBox = document.getElementById("error");
+    const nameInput = document.getElementById("admin-name");
+    const keyInput = document.getElementById("admin-key");
+
+    function showError(message) {
+      errorBox.textContent = message;
+      errorBox.style.display = "block";
+    }
+
+    function doLogin() {
+      const adminName = nameInput.value.trim();
+      const adminKey = keyInput.value.trim();
+
+      errorBox.style.display = "none";
+
+      if (!adminName || !adminKey) {
+        showError("Completeaza ambele campuri.");
+        return;
+      }
+
+      sessionStorage.setItem("adminName", adminName);
+      sessionStorage.setItem("adminKey", adminKey);
+      window.location.href = "/panel";
+    }
+
+    document.getElementById("login-btn").addEventListener("click", doLogin);
+    keyInput.addEventListener("keydown", (event) => {
+      if (event.key === "Enter") {
+        doLogin();
+      }
+    });
+
+    if (sessionStorage.getItem("adminKey") && sessionStorage.getItem("adminName")) {
+      window.location.href = "/panel";
+    }
+  </script>
+</body>
+</html>
